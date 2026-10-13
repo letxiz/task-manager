@@ -3,7 +3,11 @@ import { Check, Trash2 } from "lucide-react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 
+import Tooltip, { useTooltip } from "./Tooltip"
+
 function TaskItem({ task, topicId, onToggle, onDelete }) {
+  const completionTooltip = useTooltip()
+  const deleteTooltip = useTooltip()
   const {
     attributes,
     isDragging,
@@ -29,23 +33,32 @@ function TaskItem({ task, topicId, onToggle, onDelete }) {
         isDragging ? "cursor-grabbing opacity-50" : "cursor-grab"
       }`}
     >
-      <label className="col-start-1 row-start-1 inline-flex size-5 cursor-pointer items-center justify-center rounded-sm">
-        <input
-          type="checkbox"
-          checked={task.concluida}
-          onChange={() => onToggle(task.id)}
-          aria-label={`Concluir ${task.titulo}`}
-          className="sr-only"
-        />
-        <span
-          aria-hidden="true"
-          className={`flex size-5 items-center justify-center rounded-sm bg-orange-300 ${
-            task.concluida ? "text-white" : "text-transparent"
-          }`}
-        >
-          {task.concluida && <Check size={14} strokeWidth={3} />}
-        </span>
-      </label>
+      <Tooltip
+        id={completionTooltip.id}
+        open={completionTooltip.open}
+        wrapperProps={completionTooltip.wrapperProps}
+        content={task.concluida ? "Desmarcar tarefa" : "Concluir tarefa"}
+        className="col-start-1 row-start-1"
+      >
+        <label className="inline-flex size-5 cursor-pointer items-center justify-center rounded-sm">
+          <input
+            {...completionTooltip.triggerProps}
+            type="checkbox"
+            checked={task.concluida}
+            onChange={() => onToggle(task.id)}
+            aria-label={`Concluir ${task.titulo}`}
+            className="sr-only"
+          />
+          <span
+            aria-hidden="true"
+            className={`flex size-5 items-center justify-center rounded-sm bg-orange-300 ${
+              task.concluida ? "text-white" : "text-transparent"
+            }`}
+          >
+            {task.concluida && <Check size={14} strokeWidth={3} />}
+          </span>
+        </label>
+      </Tooltip>
 
       <h2
         className={`col-start-2 row-start-1 flex min-h-6 min-w-0 text-sm items-center font-semibold ${
@@ -68,15 +81,26 @@ function TaskItem({ task, topicId, onToggle, onDelete }) {
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={() => onDelete(task.id)}
-        aria-label={`Excluir ${task.titulo}`}
-        title="Excluir tarefa"
-        className="col-start-3 row-start-1 cursor-pointer rounded-lg p-2 text-slate-400 transition-colors hover:text-red-600"
+      <Tooltip
+        id={deleteTooltip.id}
+        open={deleteTooltip.open}
+        wrapperProps={deleteTooltip.wrapperProps}
+        content="Excluir tarefa"
+        className="col-start-3 row-start-1"
       >
-        <Trash2 size={18} />
-      </button>
+        <button
+          {...deleteTooltip.triggerProps}
+          type="button"
+          onClick={(event) => {
+            deleteTooltip.triggerProps.onClick(event)
+            onDelete(task.id)
+          }}
+          aria-label={`Excluir ${task.titulo}`}
+          className="cursor-pointer rounded-lg p-2 text-slate-400 transition-colors hover:text-red-600"
+        >
+          <Trash2 size={18} />
+        </button>
+      </Tooltip>
     </li>
   )
 }

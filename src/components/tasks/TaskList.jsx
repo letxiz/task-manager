@@ -20,8 +20,10 @@ import { CSS } from "@dnd-kit/utilities"
 
 import TaskEmptyState from "./TaskEmptyState"
 import TaskItem from "./TaskItem"
+import Tooltip, { useTooltip } from "./Tooltip"
 
 function SortableTopic({ topic, children }) {
+  const dragTooltip = useTooltip()
   const {
     attributes,
     isDragging,
@@ -35,6 +37,9 @@ function SortableTopic({ topic, children }) {
     id: `topic:${topic.id}`,
     data: { kind: "topic", topicId: topic.id },
   })
+  const dragDescribedBy = [attributes["aria-describedby"], dragTooltip.id]
+    .filter(Boolean)
+    .join(" ")
 
   return (
     <section
@@ -46,17 +51,25 @@ function SortableTopic({ topic, children }) {
       } ${isDragging ? "opacity-50" : ""}`}
     >
       <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-        <button
-          ref={setActivatorNodeRef}
-          type="button"
-          {...attributes}
-          {...listeners}
-          aria-label={`Arrastar tópico ${topic.nome}`}
-          title="Arrastar para reordenar"
-          className="cursor-grab rounded-md p-1.5 text-slate-500 hover:bg-orange-100 active:cursor-grabbing"
+        <Tooltip
+          id={dragTooltip.id}
+          open={dragTooltip.open}
+          wrapperProps={dragTooltip.wrapperProps}
+          content="Arrastar para reordenar"
         >
-          <GripVertical size={18} aria-hidden="true" />
-        </button>
+          <button
+            ref={setActivatorNodeRef}
+            type="button"
+            {...attributes}
+            {...listeners}
+            onClick={dragTooltip.triggerProps.onClick}
+            aria-describedby={dragDescribedBy}
+            aria-label={`Arrastar tópico ${topic.nome}`}
+            className="cursor-grab rounded-md p-1.5 text-slate-500 hover:bg-orange-100 active:cursor-grabbing"
+          >
+            <GripVertical size={18} aria-hidden="true" />
+          </button>
+        </Tooltip>
         <h2 id={`topic-${topic.id}`} className="flex-1 font-semibold text-slate-800">
           {topic.nome}
         </h2>
