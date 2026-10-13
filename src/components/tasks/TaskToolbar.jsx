@@ -8,7 +8,7 @@ function TaskToolbar({ taskCount, onClear, onCreateTask, onCreateTopic }) {
   return (
     <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
       <span className="text-lg font-bold text-slate-700">
-        Minhas Tarefas {taskCount}
+        Tarefas: {taskCount}
       </span>
 
       <div className="flex flex-wrap gap-2">
@@ -18,7 +18,7 @@ function TaskToolbar({ taskCount, onClear, onCreateTask, onCreateTopic }) {
           disabled={taskCount === 0}
           className="inline-flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-slate-500 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Limpar tarefas
+          Limpar
           <Trash2 size={18} />
         </button>
 
@@ -29,7 +29,7 @@ function TaskToolbar({ taskCount, onClear, onCreateTask, onCreateTopic }) {
             aria-expanded={menuAberto}
             className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-red-700 px-4 py-2 text-sm font-medium text-white hover:bg-red-800"
           >
-            Novo <Plus size={18} /> <ChevronDown size={16} />
+            Novo <Plus size={18} />
           </button>
 
           {menuAberto && (
