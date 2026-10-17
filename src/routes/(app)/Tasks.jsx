@@ -147,6 +147,22 @@ function Tasks() {
     )
   }
 
+  function reordenarTarefas(idsOrdenados) {
+    setTarefas((atuais) => {
+      const idsDoGrupo = new Set(idsOrdenados)
+      const tarefasPorId = new Map(atuais.map((tarefa) => [tarefa.id, tarefa]))
+      let indiceOrdenado = 0
+
+      // Troca apenas as posições do grupo, sem alterar a ordem das outras tarefas.
+      return atuais.map((tarefa) => {
+        if (!idsDoGrupo.has(tarefa.id)) return tarefa
+        const tarefaOrdenada = tarefasPorId.get(idsOrdenados[indiceOrdenado])
+        indiceOrdenado += 1
+        return tarefaOrdenada
+      })
+    })
+  }
+
   return (
     <>
       <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -175,6 +191,7 @@ function Tasks() {
         onToggle={alternarConclusao}
         onDelete={excluirTarefa}
         onMoveTask={moverTarefa}
+        onReorderTasks={reordenarTarefas}
         onReorderTopicos={setTopicos}
       />
 

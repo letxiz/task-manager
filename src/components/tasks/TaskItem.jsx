@@ -5,35 +5,12 @@ import { CSS } from "@dnd-kit/utilities"
 
 import Tooltip, { useTooltip } from "./Tooltip"
 
-function TaskItem({ task, topicId, onToggle, onDelete }) {
+function TaskItemContent({ task, onToggle, onDelete, preview = false }) {
   const completionTooltip = useTooltip()
   const deleteTooltip = useTooltip()
-  // Os metadados informam ao TaskList qual tarefa e tópico estão envolvidos no arraste.
-  const {
-    attributes,
-    isDragging,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({
-    id: `task:${task.id}`,
-    data: { kind: "task", taskId: task.id, topicId },
-  })
 
   return (
-    <li
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-      }}
-      className={`grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 rounded-xl bg-orange-100 px-2 py-1 ${
-        isDragging ? "cursor-grabbing opacity-50" : "cursor-grab"
-      }`}
-    >
+    <>
       <Tooltip
         id={completionTooltip.id}
         open={completionTooltip.open}
@@ -46,7 +23,8 @@ function TaskItem({ task, topicId, onToggle, onDelete }) {
             {...completionTooltip.triggerProps}
             type="checkbox"
             checked={task.concluida}
-            onChange={() => onToggle(task.id)}
+            disabled={preview}
+            onChange={() => onToggle?.(task.id)}
             aria-label={`Concluir ${task.titulo}`}
             className="sr-only"
           />
@@ -93,9 +71,10 @@ function TaskItem({ task, topicId, onToggle, onDelete }) {
         <button
           {...deleteTooltip.triggerProps}
           type="button"
+          disabled={preview}
           onClick={(event) => {
             deleteTooltip.triggerProps.onClick(event)
-            onDelete(task.id)
+            onDelete?.(task.id)
           }}
           aria-label={`Excluir ${task.titulo}`}
           className="cursor-pointer rounded-lg p-2 text-slate-400 transition-colors hover:text-red-600"
@@ -103,7 +82,54 @@ function TaskItem({ task, topicId, onToggle, onDelete }) {
           <Trash2 size={18} />
         </button>
       </Tooltip>
+    </>
+  )
+}
+
+const taskCardClassName =
+  "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 rounded-xl bg-orange-100 px-2 py-1"
+
+function TaskItem({ task, topicId, onToggle, onDelete }) {
+  // Os metadados informam ao TaskList qual tarefa e tópico estão envolvidos no arraste.
+  const {
+    attributes,
+    isDragging,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({
+    id: `task:${task.id}`,
+    data: { kind: "task", taskId: task.id, topicId },
+  })
+
+  return (
+    <li
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
+      className={`${taskCardClassName} ${
+        isDragging ? "cursor-grabbing opacity-30" : "cursor-grab"
+      }`}
+    >
+      <TaskItemContent task={task} onToggle={onToggle} onDelete={onDelete} />
     </li>
+  )
+}
+
+export function TaskItemPreview({ task, width, height }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`${taskCardClassName} pointer-events-none cursor-grabbing shadow-xl ring-2 ring-orange-300`}
+      style={{ width, height }}
+    >
+      <TaskItemContent task={task} preview />
+    </div>
   )
 }
 
@@ -118,6 +144,12 @@ TaskItem.propTypes = {
   topicId: PropTypes.string.isRequired,
   onToggle: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+}
+
+TaskItemPreview.propTypes = {
+  task: TaskItem.propTypes.task,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
 }
 
 export default TaskItem
