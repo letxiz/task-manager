@@ -2,12 +2,14 @@ import PropTypes from "prop-types"
 import { X } from "lucide-react"
 
 function TaskTopicModal({ open, name, error, onNameChange, onClose, onSubmit }) {
+  // Mantém o modal fora da árvore enquanto não estiver sendo usado.
   if (!open) return null
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       onMouseDown={(event) => {
+        // Só fecha ao clicar no fundo, sem interceptar cliques dentro do formulário.
         if (event.target === event.currentTarget) onClose()
       }}
     >

@@ -8,6 +8,7 @@ import Tooltip, { useTooltip } from "./Tooltip"
 function TaskItem({ task, topicId, onToggle, onDelete }) {
   const completionTooltip = useTooltip()
   const deleteTooltip = useTooltip()
+  // Os metadados informam ao TaskList qual tarefa e tópico estão envolvidos no arraste.
   const {
     attributes,
     isDragging,
@@ -77,6 +78,7 @@ function TaskItem({ task, topicId, onToggle, onDelete }) {
       {task.data && (
         <p className="col-start-2 mt-1 text-xs text-slate-500">
           Prazo: {" "}
+          {/* O horário local evita deslocar o dia ao converter a data para exibição. */}
           {new Date(`${task.data}T00:00:00`).toLocaleDateString("pt-BR")}
         </p>
       )}

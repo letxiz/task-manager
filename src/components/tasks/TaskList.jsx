@@ -24,6 +24,7 @@ import Tooltip, { useTooltip } from "./Tooltip"
 
 function SortableTopic({ topic, children }) {
   const dragTooltip = useTooltip()
+  // O identificador e os metadados permitem distinguir tópicos de tarefas no arraste.
   const {
     attributes,
     isDragging,
@@ -88,6 +89,7 @@ SortableTopic.propTypes = {
 }
 
 function UnassignedDropZone({ children }) {
+  // Esta área aceita tarefas sem tópico ou que estejam sendo removidas de um tópico.
   const { isOver, setNodeRef } = useDroppable({
     id: "unassigned-tasks",
     data: { kind: "unassigned" },
@@ -117,11 +119,13 @@ UnassignedDropZone.propTypes = {
 }
 
 function TaskList({ tarefas, topicos, onToggle, onDelete, onMoveTask, onReorderTopicos }) {
+  // Permite arrastar com mouse/toque ou teclado, mantendo coordenadas próprias para teclado.
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
+  // IDs de tópico inexistentes também são tratados como tarefas sem tópico.
   const tarefasSemTopico = tarefas.filter(
     (tarefa) =>
       !tarefa.topicoId || !topicos.some((topico) => topico.id === tarefa.topicoId)
@@ -158,6 +162,7 @@ function TaskList({ tarefas, topicos, onToggle, onDelete, onMoveTask, onReorderT
     const itemArrastado = active.data.current
     const alvo = over.data.current
 
+    // Ao arrastar um tópico, só reordena quando o destino é outro tópico válido.
     if (itemArrastado?.kind === "topic") {
       const topicoAlvoId =
         alvo?.kind === "topic" || alvo?.kind === "task" ? alvo.topicId : null
@@ -175,6 +180,7 @@ function TaskList({ tarefas, topicos, onToggle, onDelete, onMoveTask, onReorderT
 
     if (itemArrastado?.kind !== "task") return
 
+    // Soltar sobre um tópico/tarefa move a tarefa; soltar na área vazia remove o vínculo.
     let novoTopicoId
     if (alvo?.kind === "topic" || alvo?.kind === "task") {
       novoTopicoId = alvo.topicId || ""
@@ -205,6 +211,7 @@ function TaskList({ tarefas, topicos, onToggle, onDelete, onMoveTask, onReorderT
     >
       <div className="mt-6">
         <div className="space-y-6 rounded-3xl border border-orange-200 bg-white p-8">
+          {/* A lista externa controla a ordem dos tópicos; cada tópico controla suas tarefas. */}
           <SortableContext
             items={topicos.map((topico) => `topic:${topico.id}`)}
             strategy={verticalListSortingStrategy}

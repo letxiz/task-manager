@@ -6,6 +6,7 @@ import TaskToolbar from "../../components/tasks/TaskToolbar"
 import TaskTopicModal from "../../components/tasks/TaskTopicModal"
 
 function Tasks() {
+  // Estados dos modais e do formulário ficam na página, que coordena os componentes.
   const [modalAberto, setModalAberto] = useState(false)
   const [modalTopicoAberto, setModalTopicoAberto] = useState(false)
   const [janelaExpandida, setJanelaExpandida] = useState(false)
@@ -19,6 +20,7 @@ function Tasks() {
   const [nomeTopico, setNomeTopico] = useState("")
   const [erroTopico, setErroTopico] = useState("")
 
+  // Recupera os dados salvos ao iniciar; JSON inválido não impede a abertura da página.
   const [tarefas, setTarefas] = useState(() => {
     try {
       const salvas = localStorage.getItem("minhas-tarefas")
@@ -37,10 +39,12 @@ function Tasks() {
   })
 
   useEffect(() => {
+    // Mantém a lista persistida sempre que ela muda.
     localStorage.setItem("minhas-tarefas", JSON.stringify(tarefas))
   }, [tarefas])
 
   useEffect(() => {
+    // Os tópicos têm armazenamento próprio, independente das tarefas.
     localStorage.setItem("meus-topicos", JSON.stringify(topicos))
   }, [topicos])
 
@@ -53,6 +57,7 @@ function Tasks() {
   function criarTarefa(event) {
     event.preventDefault()
 
+    // Valida a versão sem espaços antes de montar e salvar a tarefa.
     const tituloValido = titulo.trim()
 
     if (!tituloValido) {
@@ -81,6 +86,7 @@ function Tasks() {
   }
 
   function alternarConclusao(id) {
+    // Atualiza somente a tarefa selecionada, preservando os demais campos.
     setTarefas((atuais) =>
       atuais.map((tarefa) =>
         tarefa.id === id
@@ -97,6 +103,7 @@ function Tasks() {
   function limparTarefas() {
     if (tarefas.length === 0 && topicos.length === 0) return
 
+    // A confirmação evita apagar toda a organização por um clique acidental.
     const confirmou = window.confirm(
       "Tem certeza de que deseja excluir todas as tarefas e tópicos?"
     )
@@ -116,6 +123,7 @@ function Tasks() {
       return
     }
 
+    // A comparação sem diferenciar maiúsculas evita tópicos duplicados por capitalização.
     const nomeJaExiste = topicos.some(
       (topico) => topico.nome.toLocaleLowerCase() === nome.toLocaleLowerCase()
     )
@@ -131,6 +139,7 @@ function Tasks() {
   }
 
   function moverTarefa(id, novoTopicoId) {
+    // Receber uma string vazia desvincula a tarefa de qualquer tópico.
     setTarefas((atuais) =>
       atuais.map((tarefa) =>
         tarefa.id === id ? { ...tarefa, topicoId: novoTopicoId } : tarefa
