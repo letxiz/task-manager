@@ -101,17 +101,8 @@ function Tasks() {
   }
 
   function limparTarefas() {
-    if (tarefas.length === 0 && topicos.length === 0) return
-
-    // A confirmação evita apagar toda a organização por um clique acidental.
-    const confirmou = window.confirm(
-      "Tem certeza de que deseja excluir todas as tarefas e tópicos?"
-    )
-
-    if (confirmou) {
-      setTarefas([])
-      setTopicos([])
-    }
+    setTarefas([])
+    setTopicos([])
   }
 
   function criarTopico(event) {
@@ -173,6 +164,7 @@ function Tasks() {
 
       <TaskToolbar
         taskCount={tarefas.length}
+        hasItems={tarefas.length > 0 || topicos.length > 0}
         onClear={limparTarefas}
         onCreateTask={() => {
           setErroTitulo("")

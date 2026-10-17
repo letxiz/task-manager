@@ -1,9 +1,40 @@
 import PropTypes from "prop-types"
-import { useState } from "react"
-import { ChevronDown, ListPlus, Plus, Tag, Trash2 } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import { AlertTriangle, ListPlus, Plus, Tag, Trash2 } from "lucide-react"
 
-function TaskToolbar({ taskCount, onClear, onCreateTask, onCreateTopic }) {
+function TaskToolbar({
+  taskCount,
+  hasItems,
+  onClear,
+  onCreateTask,
+  onCreateTopic,
+}) {
   const [menuAberto, setMenuAberto] = useState(false)
+  const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
+  const menuRef = useRef(null)
+
+  useEffect(() => {
+    if (!menuAberto) return undefined
+
+    function fecharAoClicarFora(event) {
+      if (!menuRef.current?.contains(event.target)) {
+        setMenuAberto(false)
+      }
+    }
+
+    function fecharComEscape(event) {
+      if (event.key === "Escape") {
+        setMenuAberto(false)
+      }
+    }
+
+    document.addEventListener("pointerdown", fecharAoClicarFora)
+    document.addEventListener("keydown", fecharComEscape)
+    return () => {
+      document.removeEventListener("pointerdown", fecharAoClicarFora)
+      document.removeEventListener("keydown", fecharComEscape)
+    }
+  }, [menuAberto])
 
   return (
     <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -14,15 +45,15 @@ function TaskToolbar({ taskCount, onClear, onCreateTask, onCreateTopic }) {
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
-          onClick={onClear}
-          disabled={taskCount === 0}
+          onClick={() => setConfirmacaoAberta(true)}
+          disabled={!hasItems}
           className="inline-flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-slate-500 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
         >
           Limpar
           <Trash2 size={18} />
         </button>
 
-        <div className="relative">
+        <div ref={menuRef} className="relative">
           <button
             type="button"
             onClick={() => setMenuAberto((aberto) => !aberto)}
@@ -59,12 +90,73 @@ function TaskToolbar({ taskCount, onClear, onCreateTask, onCreateTopic }) {
           )}
         </div>
       </div>
+
+      {confirmacaoAberta && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setConfirmacaoAberta(false)
+            }
+          }}
+        >
+          <div
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="clear-confirmation-title"
+            aria-describedby="clear-confirmation-description"
+            className="w-[min(90vw,420px)] rounded-2xl bg-white p-6 shadow-xl"
+          >
+            <div className="flex items-start gap-4">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-700">
+                <AlertTriangle size={22} aria-hidden="true" />
+              </span>
+              <div>
+                <h2
+                  id="clear-confirmation-title"
+                  className="text-lg font-semibold text-slate-800"
+                >
+                  Limpar toda a lista?
+                </h2>
+                <p
+                  id="clear-confirmation-description"
+                  className="mt-2 text-sm leading-6 text-slate-600"
+                >
+                  Todas as tarefas e todos os tópicos serão excluídos. Essa ação
+                  não pode ser desfeita.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmacaoAberta(false)}
+                className="cursor-pointer rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmacaoAberta(false)
+                  onClear()
+                }}
+                className="cursor-pointer rounded-xl bg-red-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-800"
+              >
+                Limpar tudo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 TaskToolbar.propTypes = {
   taskCount: PropTypes.number.isRequired,
+  hasItems: PropTypes.bool.isRequired,
   onClear: PropTypes.func.isRequired,
   onCreateTask: PropTypes.func.isRequired,
   onCreateTopic: PropTypes.func.isRequired,
