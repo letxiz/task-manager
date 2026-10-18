@@ -6,8 +6,9 @@ import {
   DragOverlay,
   DndContext,
   KeyboardSensor,
+  MouseSensor,
   pointerWithin,
-  PointerSensor,
+  TouchSensor,
   useDroppable,
   useSensor,
   useSensors,
@@ -105,7 +106,7 @@ function SortableTopic({ topic, children }) {
           id={dragTooltip.id}
           open={dragTooltip.open}
           wrapperProps={dragTooltip.wrapperProps}
-          content="Arrastar para reordenar"
+          content="Segure para arrastar e reordenar"
         >
           <button
             ref={setActivatorNodeRef}
@@ -178,9 +179,12 @@ function TaskList({
 }) {
   const [previaArraste, setPreviaArraste] = useState(null)
 
-  // Permite arrastar com mouse/toque ou teclado, mantendo coordenadas próprias para teclado.
+  // No toque, uma pressão breve evita iniciar o arraste durante a rolagem da página.
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 300, tolerance: 8 },
+    }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
