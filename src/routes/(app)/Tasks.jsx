@@ -5,6 +5,27 @@ import TaskList from "../../components/tasks/TaskList"
 import TaskToolbar from "../../components/tasks/TaskToolbar"
 import TaskTopicModal from "../../components/tasks/TaskTopicModal"
 
+function gerarIdSeguro() {
+  const cryptoApi = globalThis.crypto
+
+  if (typeof cryptoApi?.randomUUID === "function") {
+    return cryptoApi.randomUUID()
+  }
+
+  if (typeof cryptoApi?.getRandomValues !== "function") {
+    throw new Error("O navegador não oferece um gerador de IDs seguro.")
+  }
+
+  const bytes = cryptoApi.getRandomValues(new Uint8Array(16))
+  bytes[6] = (bytes[6] & 0x0f) | 0x40
+  bytes[8] = (bytes[8] & 0x3f) | 0x80
+  const hexadecimal = Array.from(bytes, (byte) =>
+    byte.toString(16).padStart(2, "0")
+  ).join("")
+
+  return `${hexadecimal.slice(0, 8)}-${hexadecimal.slice(8, 12)}-${hexadecimal.slice(12, 16)}-${hexadecimal.slice(16, 20)}-${hexadecimal.slice(20)}`
+}
+
 function Tasks() {
   // Estados dos modais e do formulário ficam na página, que coordena os componentes.
   const [modalAberto, setModalAberto] = useState(false)
@@ -15,10 +36,12 @@ function Tasks() {
   const [descricao, setDescricao] = useState("")
   const [data, setData] = useState("")
   const [erroTitulo, setErroTitulo] = useState("")
+  const [erroCriacaoTarefa, setErroCriacaoTarefa] = useState("")
   const [topicoId, setTopicoId] = useState("")
   const [cor, setCor] = useState("#ef4444")
   const [nomeTopico, setNomeTopico] = useState("")
   const [erroTopico, setErroTopico] = useState("")
+  const [erroCriacaoTopico, setErroCriacaoTopico] = useState("")
 
   // Recupera os dados salvos ao iniciar; JSON inválido não impede a abertura da página.
   const [tarefas, setTarefas] = useState(() => {
@@ -50,6 +73,7 @@ function Tasks() {
 
   function fecharModal() {
     setErroTitulo("")
+    setErroCriacaoTarefa("")
     setJanelaExpandida(false)
     setModalAberto(false)
   }
@@ -65,8 +89,18 @@ function Tasks() {
       return
     }
 
+    let id
+    try {
+      id = gerarIdSeguro()
+    } catch {
+      setErroCriacaoTarefa(
+        "Este navegador não conseguiu gerar um identificador seguro. Tente novamente em um navegador atualizado."
+      )
+      return
+    }
+
     const novaTarefa = {
-      id: crypto.randomUUID(),
+      id,
       titulo: tituloValido,
       descricao: descricao.trim(),
       data,
@@ -82,6 +116,7 @@ function Tasks() {
     setTopicoId("")
     setCor("#ef4444")
     setErroTitulo("")
+    setErroCriacaoTarefa("")
     setModalAberto(false)
   }
 
@@ -123,9 +158,20 @@ function Tasks() {
       return
     }
 
-    setTopicos((atuais) => [...atuais, { id: crypto.randomUUID(), nome }])
+    let id
+    try {
+      id = gerarIdSeguro()
+    } catch {
+      setErroCriacaoTopico(
+        "Este navegador não conseguiu gerar um identificador seguro. Tente novamente em um navegador atualizado."
+      )
+      return
+    }
+
+    setTopicos((atuais) => [...atuais, { id, nome }])
     setNomeTopico("")
     setErroTopico("")
+    setErroCriacaoTopico("")
     setModalTopicoAberto(false)
   }
 
@@ -168,11 +214,13 @@ function Tasks() {
         onClear={limparTarefas}
         onCreateTask={() => {
           setErroTitulo("")
+          setErroCriacaoTarefa("")
           setModalAberto(true)
         }}
         onCreateTopic={() => {
           setNomeTopico("")
           setErroTopico("")
+          setErroCriacaoTopico("")
           setModalTopicoAberto(true)
         }}
       />
@@ -194,6 +242,7 @@ function Tasks() {
         descricao={descricao}
         data={data}
         erroTitulo={erroTitulo}
+        erroCriacao={erroCriacaoTarefa}
         onClose={fecharModal}
         onSubmit={criarTarefa}
         onTitleChange={(novoTitulo) => {
@@ -212,9 +261,11 @@ function Tasks() {
         open={modalTopicoAberto}
         name={nomeTopico}
         error={erroTopico}
+        creationError={erroCriacaoTopico}
         onNameChange={(nome) => {
           setNomeTopico(nome)
           if (erroTopico) setErroTopico("")
+          if (erroCriacaoTopico) setErroCriacaoTopico("")
         }}
         onClose={() => setModalTopicoAberto(false)}
         onSubmit={criarTopico}

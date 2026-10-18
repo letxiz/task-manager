@@ -1,7 +1,15 @@
 import PropTypes from "prop-types"
 import { X } from "lucide-react"
 
-function TaskTopicModal({ open, name, error, onNameChange, onClose, onSubmit }) {
+function TaskTopicModal({
+  open,
+  name,
+  error,
+  creationError,
+  onNameChange,
+  onClose,
+  onSubmit,
+}) {
   // Mantém o modal fora da árvore enquanto não estiver sendo usado.
   if (!open) return null
 
@@ -54,6 +62,15 @@ function TaskTopicModal({ open, name, error, onNameChange, onClose, onSubmit }) 
             {error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}
           </div>
 
+          {creationError && (
+            <p
+              role="alert"
+              className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-800"
+            >
+              {creationError}
+            </p>
+          )}
+
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
@@ -79,6 +96,7 @@ TaskTopicModal.propTypes = {
   open: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   error: PropTypes.string,
+  creationError: PropTypes.string,
   onNameChange: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,

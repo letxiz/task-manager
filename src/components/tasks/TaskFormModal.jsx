@@ -283,6 +283,7 @@ function TaskFormModal({
   descricao,
   data,
   erroTitulo,
+  erroCriacao,
   onClose,
   onSubmit,
   onTitleChange,
@@ -409,6 +410,15 @@ function TaskFormModal({
             />
           </div>
 
+          {erroCriacao && (
+            <p
+              role="alert"
+              className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-800"
+            >
+              {erroCriacao}
+            </p>
+          )}
+
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
@@ -438,6 +448,7 @@ TaskFormModal.propTypes = {
   descricao: PropTypes.string.isRequired,
   data: PropTypes.string.isRequired,
   erroTitulo: PropTypes.string,
+  erroCriacao: PropTypes.string,
   onClose: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onTitleChange: PropTypes.func.isRequired,
