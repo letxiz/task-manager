@@ -1,3 +1,4 @@
+// Classes fixas para o Tailwind.
 export const TOPIC_COLORS = [
   { id: "blue", label: "Azul", swatch: "bg-topic-blue", surface: "bg-topic-blue/10 border-topic-blue/30", text: "text-topic-blue" },
   { id: "green", label: "Verde", swatch: "bg-topic-green", surface: "bg-topic-green/10 border-topic-green/30", text: "text-topic-green" },
@@ -7,5 +8,6 @@ export const TOPIC_COLORS = [
 ]
 
 export function getTopicColor(id) {
+  // Cor padrão para valores antigos.
   return TOPIC_COLORS.find((color) => color.id === id) ?? TOPIC_COLORS[0]
 }

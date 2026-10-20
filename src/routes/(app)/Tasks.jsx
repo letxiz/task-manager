@@ -38,7 +38,6 @@ function Tasks() {
   const [topicoEditando, setTopicoEditando] = useState(null)
   const [topicoParaExcluir, setTopicoParaExcluir] = useState(null)
   const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
-  // Estados dos modais e do formulário ficam na página, que coordena os componentes.
   const [modalAberto, setModalAberto] = useState(false)
   const [modalTopicoAberto, setModalTopicoAberto] = useState(false)
   const [janelaExpandida, setJanelaExpandida] = useState(false)
@@ -68,6 +67,7 @@ function Tasks() {
     }
   })
 
+  // Avisa sucesso após salvar.
   function salvarLista(chave, proximos, atualizar, mensagem) {
     atualizar(proximos)
     try {
@@ -105,6 +105,7 @@ function Tasks() {
     setTarefaEditando(null)
   }
 
+  // Edita uma cópia dos campos.
   function editarTarefa(tarefa) {
     setTarefaEditando(tarefa.id)
     setTitulo(tarefa.titulo)
@@ -130,7 +131,6 @@ function Tasks() {
   function criarTarefa(event) {
     event.preventDefault()
 
-    // Valida a versão sem espaços antes de montar e salvar a tarefa.
     const tituloValido = titulo.trim()
 
     if (!tituloValido) {
@@ -138,6 +138,7 @@ function Tasks() {
       return
     }
 
+    // Preserva ID, status e ordem.
     if (tarefaEditando) {
       setTarefas((atuais) => atuais.map((tarefa) => tarefa.id === tarefaEditando
         ? { ...tarefa, titulo: tituloValido, descricao: descricao.trim(), data, topicoId }
@@ -177,7 +178,6 @@ function Tasks() {
   }
 
   function alternarConclusao(id) {
-    // Atualiza somente a tarefa selecionada, preservando os demais campos.
     setTarefas((atuais) =>
       atuais.map((tarefa) =>
         tarefa.id === id
@@ -217,7 +217,7 @@ function Tasks() {
       return
     }
 
-    // A comparação sem diferenciar maiúsculas evita tópicos duplicados por capitalização.
+    // Evita nomes duplicados.
     const nomeJaExiste = topicos.some(
       (topico) => topico.id !== topicoEditando && topico.nome.toLocaleLowerCase() === nome.toLocaleLowerCase()
     )
@@ -252,6 +252,7 @@ function Tasks() {
     setModalTopicoAberto(false)
   }
 
+  // Exclui o tópico, mantém as tarefas.
   function excluirTopico() {
     if (!topicoParaExcluir) return
     const tarefasSalvas = setTarefas((atuais) => atuais.map((tarefa) =>
@@ -264,7 +265,7 @@ function Tasks() {
   }
 
   function moverTarefa(id, novoTopicoId) {
-    // Receber uma string vazia desvincula a tarefa de qualquer tópico.
+    // String vazia remove o vínculo.
     setTarefas((atuais) =>
       atuais.map((tarefa) =>
         tarefa.id === id ? { ...tarefa, topicoId: novoTopicoId } : tarefa
@@ -278,7 +279,7 @@ function Tasks() {
       const tarefasPorId = new Map(atuais.map((tarefa) => [tarefa.id, tarefa]))
       let indiceOrdenado = 0
 
-      // Troca apenas as posições do grupo, sem alterar a ordem das outras tarefas.
+      // Preserva a ordem dos outros grupos.
       return atuais.map((tarefa) => {
         if (!idsDoGrupo.has(tarefa.id)) return tarefa
         const tarefaOrdenada = tarefasPorId.get(idsOrdenados[indiceOrdenado])

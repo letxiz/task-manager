@@ -7,6 +7,7 @@ export default function ConfirmDialog({ open, title, message, onCancel, onConfir
   const titleId = useId()
   const messageId = useId()
 
+  // Mantém o foco na confirmação.
   useEffect(() => {
     const dialog = dialogRef.current
     if (open) dialog.showModal()

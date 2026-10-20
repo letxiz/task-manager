@@ -59,7 +59,7 @@ function TaskItemContent({ task, onToggle, onDelete, onEdit, preview = false }) 
       {task.data && (
         <p className="col-start-2 mt-1 text-xs text-slate-500">
           Prazo: {" "}
-          {/* O horário local evita deslocar o dia ao converter a data para exibição. */}
+          {/* Horário local preserva o dia. */}
           {new Date(`${task.data}T00:00:00`).toLocaleDateString("pt-BR")}
         </p>
       )}
@@ -95,7 +95,7 @@ const taskCardClassName =
   "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 rounded-xl border border-slate-200 bg-white px-3 py-3"
 
 function TaskItem({ task, topicId, onToggle, onDelete, onEdit }) {
-  // Os metadados informam ao TaskList qual tarefa e tópico estão envolvidos no arraste.
+  // Identifica a tarefa no arraste.
   const {
     attributes,
     isDragging,
@@ -111,6 +111,7 @@ function TaskItem({ task, topicId, onToggle, onDelete, onEdit }) {
   return (
     <li
       ref={setNodeRef}
+      // Ignora cliques nos controles.
       onClick={(event) => {
         if (!isDragging && !event.target.closest("button, input, label")) onEdit(task)
       }}

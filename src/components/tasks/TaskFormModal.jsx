@@ -16,7 +16,7 @@ function formatarDataISO(data) {
   return `${ano}-${mes}-${dia}`
 }
 
-// Converte o formato interno AAAA-MM-DD para o formato usado na interface.
+// Exibe a data em DD/MM/AAAA.
 function formatarDataExibicao(dataISO) {
   if (!dataISO) return ""
 
@@ -34,7 +34,7 @@ function converterDataDigitada(texto) {
   const ano = Number(anoTexto)
   const data = new Date(ano, mes - 1, dia)
 
-  // O Date ajusta datas impossíveis automaticamente; comparar os campos detecta esse ajuste.
+  // Rejeita datas inexistentes.
   if (
     ano < 1000 ||
     data.getFullYear() !== ano ||
@@ -47,7 +47,7 @@ function converterDataDigitada(texto) {
   return formatarDataISO(data)
 }
 
-// Mantém apenas números e insere as barras conforme o usuário digita.
+// Máscara DD/MM/AAAA.
 function aplicarMascaraData(valor) {
   const digitos = valor.replace(/\D/g, "").slice(0, 8)
 
@@ -70,7 +70,7 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
     const mes = mesAtual.getMonth()
     const primeiroDia = new Date(ano, mes, 1)
     const inicioGrid = new Date(primeiroDia)
-    // A grade começa no domingo e sempre ocupa seis semanas para não mudar de tamanho.
+    // Grade fixa de seis semanas.
     inicioGrid.setDate(primeiroDia.getDate() - primeiroDia.getDay())
 
     const dias = []
@@ -85,6 +85,7 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
   }, [mesAtual])
 
   const [textoData, setTextoData] = useState(() => formatarDataExibicao(valor))
+  // Data vazia é opcional.
   const dataInvalida = textoData.length > 0 && !converterDataDigitada(textoData)
   const dataSelecionada = valor ? new Date(`${valor}T00:00:00`) : null
   const [aberto, setAberto] = useState(false)
@@ -105,6 +106,7 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
       <div className="flex items-center gap-2">
         <input
+          // Validação nativa da data.
           ref={(input) => input?.setCustomValidity(
             dataInvalida ? "Digite uma data válida no formato DD/MM/AAAA." : ""
           )}
@@ -203,7 +205,6 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
                   key={dia.toISOString()}
                   type="button"
                   onClick={() => {
-                    // Atualiza o texto e o valor do formulário usando formatos distintos.
                     const dataISO = formatarDataISO(dia)
                     setTextoData(formatarDataExibicao(dataISO))
                     onSelecionar(dataISO)
@@ -239,7 +240,6 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
             <button
               type="button"
               onClick={() => {
-                // Atalho para selecionar a data de hoje e recolher o calendário.
                 const hoje = new Date()
                 const dataISO = formatarDataISO(hoje)
                 setTextoData(formatarDataExibicao(dataISO))
@@ -256,7 +256,6 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
             <button
               type="button"
               onClick={() => {
-                // Limpa a data tanto no campo visível quanto no estado do formulário.
                 setTextoData("")
                 onSelecionar("")
                 setAberto(false)
@@ -348,6 +347,7 @@ function TaskFormModal({
         </div>
 
         <form noValidate onSubmit={(event) => {
+          // Bloqueia datas inválidas.
           if (!event.currentTarget.reportValidity()) {
             event.preventDefault()
             return
@@ -433,6 +433,7 @@ function TaskFormModal({
             />
           </div>
 
+          {/* Tópico opcional. */}
           {topicos.length > 0 && (
             <div>
               <label htmlFor="tarefa-topico" className="mb-1.5 block text-sm font-medium text-slate-700">

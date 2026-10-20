@@ -2,6 +2,7 @@ export function dataISOValida(valor) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false
   const data = new Date(`${valor}T00:00:00`)
   const [ano, mes, dia] = valor.split("-").map(Number)
+  // Rejeita dias inexistentes.
   return ano >= 1000 && data.getFullYear() === ano &&
     data.getMonth() === mes - 1 && data.getDate() === dia
 }
@@ -10,6 +11,7 @@ export function carregarTarefas(storage) {
   try {
     const salvas = (storage ?? localStorage).getItem("minhas-tarefas")
     const tarefas = salvas === null ? [] : JSON.parse(salvas)
+    // Valida campos e IDs únicos.
     const ids = new Set()
     if (!Array.isArray(tarefas) || !tarefas.every((tarefa) => {
       if (!tarefa || typeof tarefa !== "object" ||
@@ -23,6 +25,7 @@ export function carregarTarefas(storage) {
     })) throw new Error("Dados inválidos")
     return { tarefas, erro: "" }
   } catch {
+    // Preserva os dados inválidos.
     return {
       tarefas: [],
       erro: "Não foi possível carregar as tarefas salvas. Os dados anteriores foram preservados; adicionar tarefas substituirá a lista salva.",

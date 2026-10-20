@@ -30,7 +30,7 @@ import Tooltip from "./Tooltip"
 import { useTooltip } from "./useTooltip"
 
 function detectarColisao(args) {
-  // Ao arrastar uma tarefa, prioriza outra tarefa sob o ponteiro em vez do tópico pai.
+  // Prioriza tarefas sob o ponteiro.
   if (args.active.data.current?.kind === "task") {
     const sobreposicoes = pointerWithin(args)
       .filter((colisao) => colisao.id !== args.active.id)
@@ -55,7 +55,7 @@ function detectarColisao(args) {
         ? ""
         : recipienteAlvo?.data.current?.topicId
     if (areaAlvo && areaTopicoId === args.active.data.current?.topicId) {
-      // Nos espaços entre cartões do mesmo grupo, escolhe a tarefa mais próxima.
+      // Usa a tarefa mais próxima.
       const tarefasDoGrupo = args.droppableContainers.filter(
         (item) =>
           item.id !== args.active.id &&
@@ -78,7 +78,7 @@ function detectarColisao(args) {
 function SortableTopic({ topic, children, onDeleteTopic, onEditTopic }) {
   const color = getTopicColor(topic.cor)
   const dragTooltip = useTooltip()
-  // O identificador e os metadados permitem distinguir tópicos de tarefas no arraste.
+  // Identifica o tópico no arraste.
   const {
     attributes,
     isDragging,
@@ -106,6 +106,7 @@ function SortableTopic({ topic, children, onDeleteTopic, onEditTopic }) {
       } ${isDragging ? "opacity-50" : ""}`}
     >
       <div
+        // Ignora os botões do cabeçalho.
         onClick={(event) => {
           if (!isDragging && !event.target.closest("button")) onEditTopic(topic)
         }}
@@ -161,7 +162,6 @@ SortableTopic.propTypes = {
 }
 
 function UnassignedDropZone({ children }) {
-  // Esta área aceita tarefas sem tópico ou que estejam sendo removidas de um tópico.
   const { isOver, setNodeRef } = useDroppable({
     id: "unassigned-tasks",
     data: { kind: "unassigned" },
@@ -205,7 +205,7 @@ function TaskList({
   const notify = useNotification()
   const [previaArraste, setPreviaArraste] = useState(null)
 
-  // No toque, uma pressão breve evita iniciar o arraste durante a rolagem da página.
+  // Pressão longa evita arraste ao rolar.
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, {
@@ -214,7 +214,7 @@ function TaskList({
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
-  // IDs de tópico inexistentes também são tratados como tarefas sem tópico.
+  // Tópico ausente vira Sem tópico.
   const tarefasSemTopico = tarefas.filter(
     (tarefa) =>
       !tarefa.topicoId || !topicos.some((topico) => topico.id === tarefa.topicoId)
@@ -253,7 +253,7 @@ function TaskList({
     const itemArrastado = active.data.current
     const alvo = over.data.current
 
-    // Ao arrastar um tópico, só reordena quando o destino é outro tópico válido.
+    // Reordena entre tópicos válidos.
     if (itemArrastado?.kind === "topic") {
       const topicoAlvoId =
         alvo?.kind === "topic" || alvo?.kind === "task" ? alvo.topicId : null
@@ -271,7 +271,7 @@ function TaskList({
 
     if (itemArrastado?.kind !== "task") return
 
-    // Reordena dentro do mesmo grupo usando a lista já filtrada exibida na tela.
+    // Reordena apenas o grupo atual.
     if (alvo?.kind === "task" && itemArrastado.topicId === alvo.topicId) {
       const tarefasDoGrupo =
         itemArrastado.topicId === ""
@@ -295,7 +295,7 @@ function TaskList({
       return
     }
 
-    // Soltar sobre um tópico/tarefa move a tarefa; soltar na área vazia remove o vínculo.
+    // Move ou desvincula a tarefa.
     let novoTopicoId
     if (alvo?.kind === "topic" || alvo?.kind === "task") {
       novoTopicoId = alvo.topicId || ""
@@ -352,7 +352,6 @@ function TaskList({
     >
       <div className="mt-6">
         <div className="space-y-6 rounded-3xl border border-orange-200 bg-white p-8">
-          {/* A lista externa controla a ordem dos tópicos; cada tópico controla suas tarefas. */}
           <SortableContext
             items={topicos.map((topico) => `topic:${topico.id}`)}
             strategy={verticalListSortingStrategy}

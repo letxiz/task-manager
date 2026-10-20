@@ -6,13 +6,12 @@ export function useTooltip() {
   const hoverTimerRef = useRef(null)
   const [open, setOpen] = useState(false)
 
-  // Cancela a abertura pendente, evitando que o balão apareça após o ponteiro sair.
   function clearHoverTimer() {
     window.clearTimeout(hoverTimerRef.current)
     hoverTimerRef.current = null
   }
 
-  // Aguarda um breve intervalo para não exibir o balão em passagens rápidas.
+  // Evita abrir em passagens rápidas.
   function scheduleOpen() {
     if (open) return
 
@@ -23,7 +22,6 @@ export function useTooltip() {
     }, 600)
   }
 
-  // O clique fecha o balão, inclusive quando o foco continua no controle.
   function handleTriggerClick() {
     clearHoverTimer()
     setOpen(false)
@@ -32,7 +30,6 @@ export function useTooltip() {
   useEffect(() => {
     if (!open) return undefined
 
-    // Fecha o balão quando a interação acontece fora do elemento que o contém.
     function closeOnOutsideClick(event) {
       if (!wrapperRef.current?.contains(event.target)) {
         setOpen(false)
@@ -43,7 +40,7 @@ export function useTooltip() {
     return () => document.removeEventListener("pointerdown", closeOnOutsideClick)
   }, [open])
 
-  // Libera o temporizador caso o componente seja desmontado antes da abertura.
+  // Limpa o timer ao desmontar.
   useEffect(() => () => window.clearTimeout(hoverTimerRef.current), [])
 
   return {

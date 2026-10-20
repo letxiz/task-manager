@@ -7,6 +7,7 @@ function Notification({ message, type, onClose }) {
   const Icon = type === "info" ? Info : CheckCircle2
   const [paused, setPaused] = useState(false)
 
+  // Reinicia o prazo após a interação.
   useEffect(() => {
     if (paused) return
     const timer = setTimeout(onClose, 5000)
@@ -46,12 +47,14 @@ Notification.propTypes = {
 export function NotificationProvider({ children }) {
   const [notification, setNotification] = useState(null)
   const regionRef = useRef(null)
+  // Cada aviso tem seu próprio timer.
   const nextId = useRef(0)
   const notify = useCallback((message, type = "success") => {
     setNotification({ id: ++nextId.current, message, type })
   }, [])
   const close = useCallback(() => setNotification(null), [])
 
+  // Exibe avisos acima dos modais.
   useEffect(() => {
     const region = regionRef.current
     if (notification) region.showPopover()

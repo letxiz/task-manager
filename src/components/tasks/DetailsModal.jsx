@@ -21,6 +21,7 @@ export default function DetailsModal({ item, kind, topicName, taskCount, onClose
       onCancel={(event) => { event.preventDefault(); onClose() }}
       onClick={(event) => {
         if (event.target !== event.currentTarget) return
+        // Fecha ao clicar fora.
         const rect = event.currentTarget.getBoundingClientRect()
         if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose()
       }}
