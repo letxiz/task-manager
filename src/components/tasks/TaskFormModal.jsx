@@ -16,6 +16,7 @@ function formatarDataISO(data) {
   return `${ano}-${mes}-${dia}`
 }
 
+// Converte o formato interno AAAA-MM-DD para o formato usado na interface.
 function formatarDataExibicao(dataISO) {
   if (!dataISO) return ""
 
@@ -33,6 +34,7 @@ function converterDataDigitada(texto) {
   const ano = Number(anoTexto)
   const data = new Date(ano, mes - 1, dia)
 
+  // O Date ajusta datas impossíveis automaticamente; comparar os campos detecta esse ajuste.
   if (
     ano < 1000 ||
     data.getFullYear() !== ano ||
@@ -45,6 +47,7 @@ function converterDataDigitada(texto) {
   return formatarDataISO(data)
 }
 
+// Mantém apenas números e insere as barras conforme o usuário digita.
 function aplicarMascaraData(valor) {
   const digitos = valor.replace(/\D/g, "").slice(0, 8)
 
@@ -67,6 +70,7 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
     const mes = mesAtual.getMonth()
     const primeiroDia = new Date(ano, mes, 1)
     const inicioGrid = new Date(primeiroDia)
+    // A grade começa no domingo e sempre ocupa seis semanas para não mudar de tamanho.
     inicioGrid.setDate(primeiroDia.getDate() - primeiroDia.getDay())
 
     const dias = []
@@ -199,6 +203,7 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
                   key={dia.toISOString()}
                   type="button"
                   onClick={() => {
+                    // Atualiza o texto e o valor do formulário usando formatos distintos.
                     const dataISO = formatarDataISO(dia)
                     setTextoData(formatarDataExibicao(dataISO))
                     onSelecionar(dataISO)
@@ -234,6 +239,7 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
             <button
               type="button"
               onClick={() => {
+                // Atalho para selecionar a data de hoje e recolher o calendário.
                 const hoje = new Date()
                 const dataISO = formatarDataISO(hoje)
                 setTextoData(formatarDataExibicao(dataISO))
@@ -250,6 +256,7 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
             <button
               type="button"
               onClick={() => {
+                // Limpa a data tanto no campo visível quanto no estado do formulário.
                 setTextoData("")
                 onSelecionar("")
                 setAberto(false)
@@ -280,6 +287,7 @@ function TaskFormModal({
   descricao,
   data,
   erroTitulo,
+  erroCriacao,
   onClose,
   onSubmit,
   onTitleChange,
@@ -421,6 +429,15 @@ function TaskFormModal({
             />
           </div>
 
+          {erroCriacao && (
+            <p
+              role="alert"
+              className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-800"
+            >
+              {erroCriacao}
+            </p>
+          )}
+
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
@@ -450,6 +467,7 @@ TaskFormModal.propTypes = {
   descricao: PropTypes.string.isRequired,
   data: PropTypes.string.isRequired,
   erroTitulo: PropTypes.string,
+  erroCriacao: PropTypes.string,
   onClose: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onTitleChange: PropTypes.func.isRequired,

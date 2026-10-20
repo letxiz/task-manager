@@ -46,8 +46,9 @@ Notification.propTypes = {
 export function NotificationProvider({ children }) {
   const [notification, setNotification] = useState(null)
   const regionRef = useRef(null)
+  const nextId = useRef(0)
   const notify = useCallback((message, type = "success") => {
-    setNotification({ id: crypto.randomUUID(), message, type })
+    setNotification({ id: ++nextId.current, message, type })
   }, [])
   const close = useCallback(() => setNotification(null), [])
 
