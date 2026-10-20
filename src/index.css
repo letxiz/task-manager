@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
 @theme {
+  --color-topic-blue: var(--color-blue-700);
+  --color-topic-green: var(--color-emerald-700);
+  --color-topic-purple: var(--color-violet-700);
+  --color-topic-amber: var(--color-amber-700);
+  --color-topic-rose: var(--color-rose-700);
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --color-primary: var(--color-red-700);

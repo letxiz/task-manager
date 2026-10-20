@@ -1,35 +1,47 @@
+import { useEffect, useRef } from "react"
+import { TOPIC_COLORS } from "../../constants/topicColors"
 import PropTypes from "prop-types"
-import { X } from "lucide-react"
+import { Check, X } from "lucide-react"
 
 function TaskTopicModal({
+  editing = false,
   open,
   name,
+  color,
+  onColorChange,
   error,
   creationError,
   onNameChange,
   onClose,
   onSubmit,
 }) {
-  // Mantém o modal fora da árvore enquanto não estiver sendo usado.
-  if (!open) return null
+  const dialogRef = useRef(null)
+
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (open) dialog.showModal()
+    else dialog.close()
+  }, [open])
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      onMouseDown={(event) => {
-        // Só fecha ao clicar no fundo, sem interceptar cliques dentro do formulário.
-        if (event.target === event.currentTarget) onClose()
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="topic-modal-title"
+      onCancel={(event) => {
+        event.preventDefault()
+        onClose()
       }}
+      onClick={(event) => {
+        if (event.target !== event.currentTarget) return
+        const rect = event.currentTarget.getBoundingClientRect()
+        if (event.clientX < rect.left || event.clientX > rect.right ||
+            event.clientY < rect.top || event.clientY > rect.bottom) onClose()
+      }}
+      className="fixed inset-0 m-auto max-h-[92dvh] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-2xl border-0 bg-white p-6 text-slate-900 shadow-xl backdrop:bg-slate-950/50"
     >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="topic-modal-title"
-        className="w-[min(90vw,420px)] rounded-xl bg-white p-6 shadow-xl"
-      >
         <div className="flex items-center justify-between gap-4">
           <h2 id="topic-modal-title" className="text-xl font-semibold text-slate-800">
-            Novo tópico
+            {editing ? "Editar tópico" : "Novo tópico"}
           </h2>
           <button
             type="button"
@@ -62,6 +74,28 @@ function TaskTopicModal({
             {error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}
           </div>
 
+          <fieldset>
+            <legend className="mb-3 text-sm font-medium text-slate-700">Cor do tópico</legend>
+            <div className="flex flex-wrap gap-3">
+              {TOPIC_COLORS.map((option) => (
+                <label key={option.id} className="flex cursor-pointer flex-col items-center gap-1 text-xs text-slate-600">
+                  <input
+                    type="radio"
+                    name="topic-color"
+                    value={option.id}
+                    checked={color === option.id}
+                    onChange={() => onColorChange(option.id)}
+                    className="peer sr-only"
+                  />
+                  <span aria-hidden="true" className={`flex size-10 items-center justify-center rounded-full border-4 border-white text-white ring-2 ring-transparent peer-checked:ring-slate-700 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-primary ${option.swatch}`}>
+                    {color === option.id && <Check size={18} strokeWidth={3} />}
+                  </span>
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
           {creationError && (
             <p
               role="alert"
@@ -81,20 +115,22 @@ function TaskTopicModal({
             </button>
             <button
               type="submit"
-              className="cursor-pointer rounded-xl bg-red-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800"
+              className="cursor-pointer rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-hover"
             >
-              Criar tópico
+              {editing ? "Salvar alterações" : "Criar tópico"}
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </dialog>
   )
 }
 
 TaskTopicModal.propTypes = {
+  editing: PropTypes.bool,
   open: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
+  color: PropTypes.oneOf(TOPIC_COLORS.map((option) => option.id)).isRequired,
+  onColorChange: PropTypes.func.isRequired,
   error: PropTypes.string,
   creationError: PropTypes.string,
   onNameChange: PropTypes.func.isRequired,

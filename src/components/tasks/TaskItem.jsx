@@ -6,7 +6,7 @@ import { CSS } from "@dnd-kit/utilities"
 import Tooltip from "./Tooltip"
 import { useTooltip } from "./useTooltip"
 
-function TaskItemContent({ task, onToggle, onDelete, preview = false }) {
+function TaskItemContent({ task, onToggle, onDelete, onEdit, preview = false }) {
   const completionTooltip = useTooltip()
   const deleteTooltip = useTooltip()
 
@@ -31,7 +31,7 @@ function TaskItemContent({ task, onToggle, onDelete, preview = false }) {
           />
           <span
             aria-hidden="true"
-            className={`flex size-5 items-center justify-center rounded-sm bg-orange-300 ${
+            className={`flex size-5 items-center justify-center rounded-sm border border-slate-300 bg-primary ${
               task.concluida ? "text-white" : "text-transparent"
             }`}
           >
@@ -45,7 +45,9 @@ function TaskItemContent({ task, onToggle, onDelete, preview = false }) {
           task.concluida ? "text-slate-400 line-through" : "text-slate-700"
         }`}
       >
-        {task.titulo}
+        <button type="button" disabled={preview} onClick={() => onEdit?.(task)} className="min-w-0 cursor-pointer break-words text-left hover:underline focus-visible:outline-2 focus-visible:outline-primary" aria-label={`Ver detalhes da tarefa ${task.titulo}`}>
+          {task.titulo}
+        </button>
       </h2>
 
       {task.descricao && (
@@ -62,6 +64,7 @@ function TaskItemContent({ task, onToggle, onDelete, preview = false }) {
         </p>
       )}
 
+      <div className="col-start-3 row-start-1 flex items-center">
       <Tooltip
         id={deleteTooltip.id}
         open={deleteTooltip.open}
@@ -83,14 +86,15 @@ function TaskItemContent({ task, onToggle, onDelete, preview = false }) {
           <Trash2 size={18} />
         </button>
       </Tooltip>
+      </div>
     </>
   )
 }
 
 const taskCardClassName =
-  "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 rounded-xl bg-orange-100 px-2 py-1"
+  "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 rounded-xl border border-slate-200 bg-white px-3 py-3"
 
-function TaskItem({ task, topicId, onToggle, onDelete }) {
+function TaskItem({ task, topicId, onToggle, onDelete, onEdit }) {
   // Os metadados informam ao TaskList qual tarefa e tópico estão envolvidos no arraste.
   const {
     attributes,
@@ -107,6 +111,9 @@ function TaskItem({ task, topicId, onToggle, onDelete }) {
   return (
     <li
       ref={setNodeRef}
+      onClick={(event) => {
+        if (!isDragging && !event.target.closest("button, input, label")) onEdit(task)
+      }}
       {...attributes}
       {...listeners}
       style={{
@@ -117,7 +124,7 @@ function TaskItem({ task, topicId, onToggle, onDelete }) {
         isDragging ? "cursor-grabbing opacity-30" : "cursor-grab"
       }`}
     >
-      <TaskItemContent task={task} onToggle={onToggle} onDelete={onDelete} />
+      <TaskItemContent task={task} onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
     </li>
   )
 }
@@ -126,7 +133,7 @@ export function TaskItemPreview({ task, width, height }) {
   return (
     <div
       aria-hidden="true"
-      className={`${taskCardClassName} pointer-events-none cursor-grabbing shadow-xl ring-2 ring-orange-300`}
+      className={`${taskCardClassName} pointer-events-none cursor-grabbing shadow-xl ring-2 ring-primary/30`}
       style={{ width, height }}
     >
       <TaskItemContent task={task} preview />
@@ -135,6 +142,7 @@ export function TaskItemPreview({ task, width, height }) {
 }
 
 TaskItem.propTypes = {
+  onEdit: PropTypes.func.isRequired,
   task: PropTypes.shape({
     id: PropTypes.string.isRequired,
     titulo: PropTypes.string.isRequired,

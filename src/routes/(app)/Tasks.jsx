@@ -1,3 +1,5 @@
+import DetailsModal from "../../components/tasks/DetailsModal"
+import { TOPIC_COLORS, getTopicColor } from "../../constants/topicColors"
 import ConfirmDialog from "../../components/ui/ConfirmDialog"
 import { useNotification } from "../../contexts/NotificationContext"
 import { carregarTarefas } from "../../utils/taskStorage"
@@ -31,6 +33,10 @@ function gerarIdSeguro() {
 
 function Tasks() {
   const notify = useNotification()
+  const [detalhes, setDetalhes] = useState(null)
+  const [tarefaEditando, setTarefaEditando] = useState(null)
+  const [topicoEditando, setTopicoEditando] = useState(null)
+  const [topicoParaExcluir, setTopicoParaExcluir] = useState(null)
   const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
   // Estados dos modais e do formulário ficam na página, que coordena os componentes.
   const [modalAberto, setModalAberto] = useState(false)
@@ -44,6 +50,7 @@ function Tasks() {
   const [erroCriacaoTarefa, setErroCriacaoTarefa] = useState("")
   const [topicoId, setTopicoId] = useState("")
   const [cor, setCor] = useState("#ef4444")
+  const [corTopico, setCorTopico] = useState(TOPIC_COLORS[0].id)
   const [nomeTopico, setNomeTopico] = useState("")
   const [erroTopico, setErroTopico] = useState("")
   const [erroCriacaoTopico, setErroCriacaoTopico] = useState("")
@@ -55,7 +62,7 @@ function Tasks() {
     try {
       const salvos = JSON.parse(localStorage.getItem("meus-topicos") ?? "[]")
       if (!Array.isArray(salvos)) return []
-      return salvos.filter((topico) => topico && typeof topico.id === "string" && typeof topico.nome === "string")
+      return salvos.filter((topico) => topico && typeof topico.id === "string" && typeof topico.nome === "string").map((topico, index) => ({ ...topico, cor: topico.cor ? getTopicColor(topico.cor).id : TOPIC_COLORS[index % TOPIC_COLORS.length].id }))
     } catch {
       return []
     }
@@ -87,7 +94,37 @@ function Tasks() {
     setErroCriacaoTarefa("")
     setJanelaExpandida(false)
     setModalAberto(false)
-    if (notificar) notify("Cadastro cancelado. O rascunho foi mantido.", "info")
+    if (notificar) notify(tarefaEditando ? "Edição da tarefa cancelada. Nenhuma alteração foi aplicada." : "Cadastro cancelado. O rascunho foi mantido.", "info")
+    if (tarefaEditando) {
+      setTitulo("")
+      setDescricao("")
+      setData("")
+      setTopicoId("")
+      setCor("#ef4444")
+    }
+    setTarefaEditando(null)
+  }
+
+  function editarTarefa(tarefa) {
+    setTarefaEditando(tarefa.id)
+    setTitulo(tarefa.titulo)
+    setDescricao(tarefa.descricao ?? "")
+    setData(tarefa.data ?? "")
+    setTopicoId(tarefa.topicoId ?? "")
+    setCor(tarefa.cor ?? "#ef4444")
+    setErroTitulo("")
+    setErroCriacaoTarefa("")
+    setJanelaExpandida(false)
+    setModalAberto(true)
+  }
+
+  function editarTopico(topico) {
+    setTopicoEditando(topico.id)
+    setNomeTopico(topico.nome)
+    setCorTopico(getTopicColor(topico.cor).id)
+    setErroTopico("")
+    setErroCriacaoTopico("")
+    setModalTopicoAberto(true)
   }
 
   function criarTarefa(event) {
@@ -98,6 +135,14 @@ function Tasks() {
 
     if (!tituloValido) {
       setErroTitulo("O título da tarefa é obrigatório.")
+      return
+    }
+
+    if (tarefaEditando) {
+      setTarefas((atuais) => atuais.map((tarefa) => tarefa.id === tarefaEditando
+        ? { ...tarefa, titulo: tituloValido, descricao: descricao.trim(), data, topicoId }
+        : tarefa), "Tarefa atualizada com sucesso.")
+      fecharModal(false)
       return
     }
 
@@ -157,6 +202,12 @@ function Tasks() {
     if (tarefasSalvas && topicosSalvos) notify("Todas as tarefas e tópicos foram excluídos.")
   }
 
+  function cancelarTopico() {
+    setModalTopicoAberto(false)
+    notify(topicoEditando ? "Edição do tópico cancelada. Nenhuma alteração foi aplicada." : "Criação do tópico cancelada.", "info")
+    setTopicoEditando(null)
+  }
+
   function criarTopico(event) {
     event.preventDefault()
     const nome = nomeTopico.trim()
@@ -168,10 +219,19 @@ function Tasks() {
 
     // A comparação sem diferenciar maiúsculas evita tópicos duplicados por capitalização.
     const nomeJaExiste = topicos.some(
-      (topico) => topico.nome.toLocaleLowerCase() === nome.toLocaleLowerCase()
+      (topico) => topico.id !== topicoEditando && topico.nome.toLocaleLowerCase() === nome.toLocaleLowerCase()
     )
     if (nomeJaExiste) {
       setErroTopico("Já existe um tópico com esse nome.")
+      return
+    }
+
+    if (topicoEditando) {
+      setTopicos((atuais) => atuais.map((topico) => topico.id === topicoEditando
+        ? { ...topico, nome, cor: getTopicColor(corTopico).id }
+        : topico), "Tópico atualizado com sucesso.")
+      setTopicoEditando(null)
+      setModalTopicoAberto(false)
       return
     }
 
@@ -185,11 +245,22 @@ function Tasks() {
       return
     }
 
-    setTopicos((atuais) => [...atuais, { id, nome }])
+    setTopicos((atuais) => [...atuais, { id, nome, cor: getTopicColor(corTopico).id }], "Tópico criado com sucesso.")
     setNomeTopico("")
     setErroTopico("")
     setErroCriacaoTopico("")
     setModalTopicoAberto(false)
+  }
+
+  function excluirTopico() {
+    if (!topicoParaExcluir) return
+    const tarefasSalvas = setTarefas((atuais) => atuais.map((tarefa) =>
+      tarefa.topicoId === topicoParaExcluir.id ? { ...tarefa, topicoId: "" } : tarefa
+    ))
+    const topicosSalvos = setTopicos((atuais) => atuais.filter((topico) => topico.id !== topicoParaExcluir.id))
+    if (topicoId === topicoParaExcluir.id) setTopicoId("")
+    setTopicoParaExcluir(null)
+    if (tarefasSalvas && topicosSalvos) notify("Tópico excluído. As tarefas foram mantidas em Sem tópico.")
   }
 
   function moverTarefa(id, novoTopicoId) {
@@ -234,12 +305,15 @@ function Tasks() {
         hasItems={tarefas.length > 0 || topicos.length > 0}
         onClear={limparTarefas}
         onCreateTask={() => {
+          setTarefaEditando(null)
           setErroTitulo("")
           setErroCriacaoTarefa("")
           setModalAberto(true)
         }}
         onCreateTopic={() => {
+          setTopicoEditando(null)
           setNomeTopico("")
+          setCorTopico(TOPIC_COLORS[0].id)
           setErroTopico("")
           setErroCriacaoTopico("")
           setModalTopicoAberto(true)
@@ -251,9 +325,24 @@ function Tasks() {
         topicos={topicos}
         onToggle={alternarConclusao}
         onDelete={excluirTarefa}
+        onEditTask={(item) => setDetalhes({ kind: "task", item })}
+        onEditTopic={(item) => setDetalhes({ kind: "topic", item })}
         onMoveTask={moverTarefa}
         onReorderTasks={reordenarTarefas}
         onReorderTopicos={setTopicos}
+        onDeleteTopic={setTopicoParaExcluir}
+      />
+
+      <ConfirmDialog
+        open={Boolean(topicoParaExcluir)}
+        title={`Excluir o tópico “${topicoParaExcluir?.nome ?? ""}”?`}
+        message="O tópico será excluído. Suas tarefas serão mantidas na seção Sem tópico."
+        confirmLabel="Excluir tópico"
+        onCancel={() => {
+          setTopicoParaExcluir(null)
+          notify("Exclusão do tópico cancelada.", "info")
+        }}
+        onConfirm={excluirTopico}
       />
 
       <ConfirmDialog
@@ -267,7 +356,28 @@ function Tasks() {
         onConfirm={confirmarLimpeza}
       />
 
+      <DetailsModal
+        item={detalhes?.item ?? null}
+        kind={detalhes?.kind}
+        topicName={topicos.find((topico) => topico.id === detalhes?.item.topicoId)?.nome}
+        taskCount={tarefas.filter((tarefa) => tarefa.topicoId === detalhes?.item.id).length}
+        onClose={() => {
+          setDetalhes(null)
+          notify("Visualização de detalhes cancelada.", "info")
+        }}
+        onEdit={() => {
+          if (!detalhes) return
+          setDetalhes(null)
+          if (detalhes.kind === "task") editarTarefa(detalhes.item)
+          else editarTopico(detalhes.item)
+        }}
+      />
+
       <TaskFormModal
+        topicos={topicos}
+        topicoId={topicoId}
+        onTopicChange={setTopicoId}
+        editing={Boolean(tarefaEditando)}
         open={modalAberto}
         janelaExpandida={janelaExpandida}
         titulo={titulo}
@@ -290,8 +400,11 @@ function Tasks() {
       />
 
       <TaskTopicModal
+        editing={Boolean(topicoEditando)}
         open={modalTopicoAberto}
         name={nomeTopico}
+        color={corTopico}
+        onColorChange={setCorTopico}
         error={erroTopico}
         creationError={erroCriacaoTopico}
         onNameChange={(nome) => {
@@ -299,7 +412,7 @@ function Tasks() {
           if (erroTopico) setErroTopico("")
           if (erroCriacaoTopico) setErroCriacaoTopico("")
         }}
-        onClose={() => setModalTopicoAberto(false)}
+        onClose={cancelarTopico}
         onSubmit={criarTopico}
       />
     </>

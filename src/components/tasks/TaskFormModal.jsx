@@ -281,6 +281,10 @@ MiniCalendario.propTypes = {
 }
 
 function TaskFormModal({
+  editing = false,
+  topicos = [],
+  topicoId = "",
+  onTopicChange,
   open,
   janelaExpandida,
   titulo,
@@ -329,7 +333,7 @@ function TaskFormModal({
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 id="modal-titulo" className="text-xl font-semibold text-slate-800">
-              Nova tarefa
+              {editing ? "Editar tarefa" : "Nova tarefa"}
             </h2>
           </div>
 
@@ -429,6 +433,25 @@ function TaskFormModal({
             />
           </div>
 
+          {topicos.length > 0 && (
+            <div>
+              <label htmlFor="tarefa-topico" className="mb-1.5 block text-sm font-medium text-slate-700">
+                Tópico
+              </label>
+              <select
+                id="tarefa-topico"
+                value={topicoId}
+                onChange={(event) => onTopicChange(event.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              >
+                <option value="">Sem tópico</option>
+                {topicos.map((topico) => (
+                  <option key={topico.id} value={topico.id}>{topico.nome}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {erroCriacao && (
             <p
               role="alert"
@@ -451,7 +474,7 @@ function TaskFormModal({
               type="submit"
               className="cursor-pointer rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-hover"
             >
-              Salvar tarefa
+              {editing ? "Salvar alterações" : "Salvar tarefa"}
             </button>
           </div>
         </form>
@@ -461,6 +484,13 @@ function TaskFormModal({
 }
 
 TaskFormModal.propTypes = {
+  topicos: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    nome: PropTypes.string.isRequired,
+  })),
+  topicoId: PropTypes.string,
+  onTopicChange: PropTypes.func.isRequired,
+  editing: PropTypes.bool,
   open: PropTypes.bool.isRequired,
   janelaExpandida: PropTypes.bool.isRequired,
   titulo: PropTypes.string.isRequired,
