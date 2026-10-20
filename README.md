@@ -1,49 +1,77 @@
 # Task Manager
 
-Aplicação de gerenciamento de tarefas desenvolvida como projeto de estudo de React. A proposta é oferecer um espaço simples para organizar as atividades do dia a dia, com uma página inicial, cadastro de novas tarefas e uma tela para visualizar e acompanhar as tarefas cadastradas.
+Aplicação web para organizar tarefas por tópicos. O projeto está em desenvolvimento e foi criado com React e Vite.
 
-O projeto utiliza uma barra lateral para navegar entre as telas e tem como objetivo praticar a criação de componentes reutilizáveis, a navegação com React Router e a estilização com Tailwind CSS.
+## Funcionalidades
 
-## Status do projeto
+- Criar e editar tarefas com título, descrição e data.
+- Marcar tarefas como concluídas e excluí-las.
+- Criar, editar e excluir tópicos, com cores personalizáveis.
+- Organizar tarefas por tópico e reordená-las por arrastar e soltar.
+- Salvar tarefas e tópicos no armazenamento local do navegador (`localStorage`).
+- Usar a navegação responsiva, com menu lateral adaptado para dispositivos móveis.
+- Receber confirmações e avisos sobre as ações realizadas.
 
-Em desenvolvimento. A estrutura de navegação, a sidebar recolhível e as páginas de início e de tarefas já estão implementadas. A página de tarefas ainda exibe uma mensagem de espera; o cadastro e o gerenciamento das tarefas serão desenvolvidos nas próximas etapas.
+A página inicial ainda está em construção. A lista e o gerenciamento de tarefas estão disponíveis na seção **Tarefas**.
 
-## Funcionalidades planejadas
+## Organização das branches
 
-- Cadastrar novas tarefas.
-- Visualizar as tarefas cadastradas.
-- Marcar tarefas como concluídas.
-- Excluir tarefas.
+O desenvolvimento está organizado em três branches locais, com responsabilidades previstas para cada etapa:
+
+| Branch | Objetivo |
+| --- | --- |
+| `feat/layout` | Construir a estrutura visual, a sidebar, a navegação e a adaptação para dispositivos móveis, com Tailwind CSS e ícones do Lucide. |
+| `feat/inicio` | Desenvolver a página inicial, com resumo das tarefas e atalhos para as principais ações. |
+| `feat/nova-tarefa` | Implementar o formulário de cadastro, a validação dos campos e o armazenamento das novas tarefas. |
+
+Uma mesma branch pode incluir componentes, estilos e configurações necessários àquela etapa. A tabela descreve a divisão do trabalho, não o status de conclusão das funcionalidades.
 
 ## Tecnologias
 
-- React — construção da interface com componentes.
-- Vite — ambiente de desenvolvimento e geração do build.
-- React Router — navegação entre as páginas.
-- Tailwind CSS — estilização da interface.
+- React 19 e React Router — interface e navegação.
+- Vite — servidor de desenvolvimento e build.
+- Tailwind CSS — estilos.
+- dnd-kit — interações de arrastar e soltar.
 - Lucide React — ícones.
+- Poppins — tipografia.
+
+## Requisitos
+
+- Node.js compatível com a versão do Vite usada no projeto.
+- npm.
 
 ## Como executar
 
-Com Node.js e npm instalados, execute na pasta do projeto:
+Na pasta do projeto, instale as dependências e inicie o servidor:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Abra no navegador o endereço informado pelo Vite no terminal.
+Abra no navegador o endereço exibido no terminal.
 
-### Testar em um celular na rede local
+### Acessar em outro dispositivo da rede local
 
-Conecte o computador e o celular à mesma rede Wi-Fi. Inicie o servidor com:
+Inicie o servidor aceitando conexões da rede:
 
 ```bash
-npm run dev
+npm run dev -- --host 0.0.0.0
 ```
 
-No Windows, execute `ipconfig` no PowerShell e encontre o endereço IPv4 da conexão Wi-Fi (por exemplo, `192.168.1.15`). No celular, abra `http://192.168.1.15:5173`, substituindo o IP pelo endereço do computador. Se o Firewall do Windows perguntar, permita o acesso em redes privadas.
+Descubra o endereço IP local do computador, conecte o outro dispositivo à mesma rede e acesse `http://IP-DO-COMPUTADOR:5173` (por exemplo, `http://192.168.1.15:5173`). Talvez seja necessário permitir a conexão na configuração do firewall.
+
+## Verificações
+
+```bash
+npm run lint
+npm run build
+```
 
 ## Referência de design
 
-A interface deste projeto tem como referência o [Task Manager no Figma](https://www.figma.com/design/A5w7qejEx7p0jDkMsNIEg3/Task-Manager?node-id=0-1).
+A interface tem como referência o [Task Manager no Figma](https://www.figma.com/design/A5w7qejEx7p0jDkMsNIEg3/Task-Manager?node-id=0-1).
+
+## Autoria
+
+Projeto desenvolvido em parceria por [letxiz](https://github.com/letxiz) e [zeni-node](https://github.com/zeni-node).
