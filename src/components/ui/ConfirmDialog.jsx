@@ -2,7 +2,7 @@ import { useEffect, useId, useRef } from "react"
 import PropTypes from "prop-types"
 import { TriangleAlert } from "lucide-react"
 
-export default function ConfirmDialog({ open, title, message, onCancel, onConfirm }) {
+export default function ConfirmDialog({ open, title, message, onCancel, onConfirm, confirmLabel = "Excluir tarefas" }) {
   const dialogRef = useRef(null)
   const titleId = useId()
   const messageId = useId()
@@ -32,7 +32,7 @@ export default function ConfirmDialog({ open, title, message, onCancel, onConfir
           Cancelar
         </button>
         <button type="button" onClick={onConfirm} className="rounded-xl bg-danger px-4 py-3 text-sm font-medium text-white hover:bg-danger-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger">
-          Excluir tarefas
+          {confirmLabel}
         </button>
       </div>
     </dialog>
@@ -40,6 +40,7 @@ export default function ConfirmDialog({ open, title, message, onCancel, onConfir
 }
 
 ConfirmDialog.propTypes = {
+  confirmLabel: PropTypes.string,
   open: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired,
   message: PropTypes.string.isRequired,

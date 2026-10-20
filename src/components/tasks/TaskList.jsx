@@ -1,5 +1,7 @@
+import { getTopicColor } from "../../constants/topicColors"
+import { useNotification } from "../../contexts/NotificationContext"
 import PropTypes from "prop-types"
-import { GripVertical } from "lucide-react"
+import { GripVertical, Trash2 } from "lucide-react"
 import { useState } from "react"
 import {
   closestCenter,
@@ -73,7 +75,8 @@ function detectarColisao(args) {
   return closestCenter(args)
 }
 
-function SortableTopic({ topic, children }) {
+function SortableTopic({ topic, children, onDeleteTopic, onEditTopic }) {
+  const color = getTopicColor(topic.cor)
   const dragTooltip = useTooltip()
   // O identificador e os metadados permitem distinguir tópicos de tarefas no arraste.
   const {
@@ -98,11 +101,16 @@ function SortableTopic({ topic, children }) {
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       aria-labelledby={`topic-${topic.id}`}
-      className={`rounded-2xl transition-colors ${
-        isOver ? "bg-orange-50" : ""
+      className={`rounded-2xl border p-4 transition-colors ${color.surface} ${
+        isOver ? "ring-2 ring-primary/30" : ""
       } ${isDragging ? "opacity-50" : ""}`}
     >
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+      <div
+        onClick={(event) => {
+          if (!isDragging && !event.target.closest("button")) onEditTopic(topic)
+        }}
+        className={`flex cursor-pointer items-center gap-2 border-b border-current/10 pb-2 ${color.text}`}
+      >
         <Tooltip
           id={dragTooltip.id}
           open={dragTooltip.open}
@@ -122,9 +130,20 @@ function SortableTopic({ topic, children }) {
             <GripVertical size={18} aria-hidden="true" />
           </button>
         </Tooltip>
-        <h2 id={`topic-${topic.id}`} className="flex-1 font-semibold text-slate-800">
-          {topic.nome}
+        <h2 id={`topic-${topic.id}`} className={`min-w-0 flex-1 break-words font-semibold ${color.text}`}>
+          <button type="button" onClick={() => onEditTopic(topic)} aria-label={`Ver detalhes do tópico ${topic.nome}`} className="min-h-11 w-full cursor-pointer rounded-lg px-2 py-2 text-left break-words transition-colors hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-primary">
+            {topic.nome}
+          </button>
         </h2>
+        <button
+          type="button"
+          onClick={() => onDeleteTopic(topic)}
+          aria-label={`Excluir tópico ${topic.nome}`}
+          title="Excluir tópico"
+          className="shrink-0 rounded-lg p-2 text-muted hover:bg-white/70 hover:text-danger focus-visible:outline-2 focus-visible:outline-danger"
+        >
+          <Trash2 size={18} aria-hidden="true" />
+        </button>
       </div>
       {children}
     </section>
@@ -132,6 +151,8 @@ function SortableTopic({ topic, children }) {
 }
 
 SortableTopic.propTypes = {
+  onEditTopic: PropTypes.func.isRequired,
+  onDeleteTopic: PropTypes.func.isRequired,
   topic: PropTypes.shape({
     id: PropTypes.string.isRequired,
     nome: PropTypes.string.isRequired,
@@ -177,7 +198,11 @@ function TaskList({
   onMoveTask,
   onReorderTasks,
   onReorderTopicos,
+  onDeleteTopic,
+  onEditTask,
+  onEditTopic,
 }) {
+  const notify = useNotification()
   const [previaArraste, setPreviaArraste] = useState(null)
 
   // No toque, uma pressão breve evita iniciar o arraste durante a rolagem da página.
@@ -213,6 +238,7 @@ function TaskList({
             topicId={idTopico}
             onToggle={onToggle}
             onDelete={onDelete}
+            onEdit={onEditTask}
           />
           ))}
         </ul>
@@ -319,7 +345,10 @@ function TaskList({
       collisionDetection={detectarColisao}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      onDragCancel={() => setPreviaArraste(null)}
+      onDragCancel={() => {
+        setPreviaArraste(null)
+        notify("Movimentação cancelada.", "info")
+      }}
     >
       <div className="mt-6">
         <div className="space-y-6 rounded-3xl border border-orange-200 bg-white p-8">
@@ -330,7 +359,7 @@ function TaskList({
           >
             <div className="space-y-6">
               {topicos.map((topico) => (
-                <SortableTopic key={topico.id} topic={topico}>
+                <SortableTopic key={topico.id} topic={topico} onDeleteTopic={onDeleteTopic} onEditTopic={onEditTopic}>
                   {renderizarTarefas(
                     tarefas.filter((tarefa) => tarefa.topicoId === topico.id),
                     topico.id
@@ -361,6 +390,9 @@ function TaskList({
 }
 
 TaskList.propTypes = {
+  onEditTask: PropTypes.func.isRequired,
+  onEditTopic: PropTypes.func.isRequired,
+  onDeleteTopic: PropTypes.func.isRequired,
   tarefas: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
