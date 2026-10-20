@@ -1,4 +1,8 @@
-﻿import { useEffect, useState } from "react"
+import ConfirmDialog from "../../components/ui/ConfirmDialog"
+import { useNotification } from "../../contexts/NotificationContext"
+import { useState } from "react"
+
+import { carregarTarefas } from "../../utils/taskStorage"
 
 import TaskEmptyState from "../../components/layout/tasks/TaskEmptyState"
 import TaskFormModal from "../../components/layout/tasks/TaskFormModal"
@@ -6,6 +10,8 @@ import TaskItem from "../../components/layout/tasks/TaskItem"
 import TaskToolbar from "../../components/layout/tasks/TaskToolbar"
 
 function Tasks() {
+  const notify = useNotification()
+  const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
   const [modalAberto, setModalAberto] = useState(false)
   const [janelaExpandida, setJanelaExpandida] = useState(false)
 
@@ -14,23 +20,29 @@ function Tasks() {
   const [data, setData] = useState("")
   const [erroTitulo, setErroTitulo] = useState("")
 
-  const [tarefas, setTarefas] = useState(() => {
+  const [armazenamento] = useState(() => carregarTarefas())
+  const [tarefas, atualizarTarefas] = useState(armazenamento.tarefas)
+  const [erroArmazenamento, setErroArmazenamento] = useState(armazenamento.erro)
+
+  function setTarefas(atualizar, mensagem) {
+    const proximas = atualizar(tarefas)
+    atualizarTarefas(proximas)
     try {
-      const salvas = localStorage.getItem("minhas-tarefas")
-      return salvas ? JSON.parse(salvas) : []
+      localStorage.setItem("minhas-tarefas", JSON.stringify(proximas))
+      setErroArmazenamento("")
+      if (mensagem) notify(mensagem)
     } catch {
-      return []
+      setErroArmazenamento(
+        "Não foi possível salvar as tarefas neste navegador. As alterações podem ser perdidas ao sair da página."
+      )
     }
-  })
+  }
 
-  useEffect(() => {
-    localStorage.setItem("minhas-tarefas", JSON.stringify(tarefas))
-  }, [tarefas])
-
-  function fecharModal() {
+  function fecharModal(notificar = true) {
     setErroTitulo("")
     setJanelaExpandida(false)
     setModalAberto(false)
+    if (notificar) notify("Cadastro cancelado. O rascunho foi mantido.", "info")
   }
 
   function criarTarefa(event) {
@@ -51,12 +63,12 @@ function Tasks() {
       concluida: false,
     }
 
-    setTarefas((atuais) => [...atuais, novaTarefa])
+    setTarefas((atuais) => [...atuais, novaTarefa], "Tarefa cadastrada com sucesso.")
     setTitulo("")
     setDescricao("")
     setData("")
     setErroTitulo("")
-    setModalAberto(false)
+    fecharModal(false)
   }
 
   function alternarConclusao(id) {
@@ -70,19 +82,18 @@ function Tasks() {
   }
 
   function excluirTarefa(id) {
-    setTarefas((atuais) => atuais.filter((tarefa) => tarefa.id !== id))
+    setTarefas((atuais) => atuais.filter((tarefa) => tarefa.id !== id), "Tarefa excluída.")
   }
 
   function limparTarefas() {
     if (tarefas.length === 0) return
 
-    const confirmou = window.confirm(
-      "Tem certeza de que deseja excluir todas as tarefas?"
-    )
+    setConfirmacaoAberta(true)
+  }
 
-    if (confirmou) {
-      setTarefas([])
-    }
+  function confirmarLimpeza() {
+    setTarefas(() => [], "Todas as tarefas foram excluídas.")
+    setConfirmacaoAberta(false)
   }
 
   return (
@@ -92,6 +103,12 @@ function Tasks() {
       </h1>
 
       <p className="mt-2 text-slate-600">Organize aqui o que precisa fazer.</p>
+
+      {erroArmazenamento && (
+        <p role="alert" className="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-800">
+          {erroArmazenamento}
+        </p>
+      )}
 
       <TaskToolbar
         taskCount={tarefas.length}
@@ -116,6 +133,17 @@ function Tasks() {
           ))}
         </ul>
       )}
+
+      <ConfirmDialog
+        open={confirmacaoAberta}
+        title="Excluir todas as tarefas?"
+        message="Todas as tarefas serão removidas. Essa ação não pode ser desfeita."
+        onCancel={() => {
+          setConfirmacaoAberta(false)
+          notify("Exclusão cancelada. Suas tarefas foram mantidas.", "info")
+        }}
+        onConfirm={confirmarLimpeza}
+      />
 
       <TaskFormModal
         open={modalAberto}

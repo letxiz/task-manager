@@ -1,3 +1,4 @@
+import { NotificationProvider } from "./components/ui/Notification"
 import { Route, Routes } from "react-router-dom"
 import AppLayout from "./routes/(app)/layout"
 import Home from "./routes/(app)/Home"
@@ -6,6 +7,7 @@ import NotFound from "./routes/(app)/NotFound"
 
 function App() {
   return (
+    <NotificationProvider>
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<Home />} />
@@ -13,6 +15,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
+    </NotificationProvider>
   )
 }
 

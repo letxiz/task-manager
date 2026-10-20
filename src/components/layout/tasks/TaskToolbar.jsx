@@ -13,7 +13,7 @@ function TaskToolbar({ taskCount, onClear, onCreate }) {
           type="button"
           onClick={onClear}
           disabled={taskCount === 0}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-slate-500 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-muted transition-colors enabled:hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
         >
           Limpar tarefas
           <Trash2 size={18} />
@@ -22,7 +22,7 @@ function TaskToolbar({ taskCount, onClear, onCreate }) {
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-red-700 px-4 py-2 text-sm font-medium text-white hover:bg-red-800"
+          className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
         >
           Nova tarefa
           <Plus size={18} />

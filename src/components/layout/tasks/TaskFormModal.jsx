@@ -1,5 +1,5 @@
 import PropTypes from "prop-types"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import {
   AlertCircle,
   CalendarDays,
@@ -81,7 +81,7 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
   }, [mesAtual])
 
   const [textoData, setTextoData] = useState(() => formatarDataExibicao(valor))
-  const dataInvalida = textoData.length === 10 && !converterDataDigitada(textoData)
+  const dataInvalida = textoData.length > 0 && !converterDataDigitada(textoData)
   const dataSelecionada = valor ? new Date(`${valor}T00:00:00`) : null
   const [aberto, setAberto] = useState(false)
 
@@ -101,6 +101,9 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
       <div className="flex items-center gap-2">
         <input
+          ref={(input) => input?.setCustomValidity(
+            dataInvalida ? "Digite uma data válida no formato DD/MM/AAAA." : ""
+          )}
           id="data"
           type="text"
           inputMode="numeric"
@@ -126,7 +129,8 @@ function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
           type="button"
           onClick={alternarCalendario}
           className="flex h-[42px] w-[42px] items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-600 transition-colors hover:border-red-600 hover:text-red-700 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
-          aria-label="Abrir calendário"
+          aria-label={aberto ? "Fechar calendário" : "Abrir calendário"}
+          aria-expanded={aberto}
         >
           <CalendarDays size={18} />
         </button>
@@ -284,25 +288,36 @@ function TaskFormModal({
   onExpand,
   onContract,
 }) {
-  if (!open) return null
+  const dialogRef = useRef(null)
+
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (open) {
+      dialog.showModal()
+    } else {
+      dialog.close()
+    }
+  }, [open])
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) {
-          onClose()
-        }
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="modal-titulo"
+      onCancel={(event) => {
+        event.preventDefault()
+        onClose()
       }}
+      onClick={(event) => {
+        if (event.target !== event.currentTarget) return
+        const rect = event.currentTarget.getBoundingClientRect()
+        if (event.clientX < rect.left || event.clientX > rect.right ||
+            event.clientY < rect.top || event.clientY > rect.bottom) onClose()
+      }}
+      className={`fixed inset-0 m-auto max-h-[92dvh] w-[90vw] overflow-y-auto rounded-2xl border-0 bg-white p-6 text-slate-900 shadow-xl backdrop:bg-black/50 ${
+        janelaExpandida ? "max-w-[560px]" : "max-w-[420px]"
+      }`}
     >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-titulo"
-        className={`my-auto max-h-[92vh] w-[min(90vw,420px)] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl transition-all duration-200 ${
-          janelaExpandida ? "max-w-[560px]" : "max-w-[420px]"
-        }`}
-      >
+      {open && <>
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 id="modal-titulo" className="text-xl font-semibold text-slate-800">
@@ -320,7 +335,13 @@ function TaskFormModal({
           </button>
         </div>
 
-        <form noValidate onSubmit={onSubmit} className="mt-6 space-y-4">
+        <form noValidate onSubmit={(event) => {
+          if (!event.currentTarget.reportValidity()) {
+            event.preventDefault()
+            return
+          }
+          onSubmit(event)
+        }} className="mt-6 space-y-4">
           <div>
             <label
               htmlFor="titulo"
@@ -411,14 +432,14 @@ function TaskFormModal({
 
             <button
               type="submit"
-              className="cursor-pointer rounded-xl bg-red-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800"
+              className="cursor-pointer rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-hover"
             >
               Salvar tarefa
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </>}
+    </dialog>
   )
 }
 
