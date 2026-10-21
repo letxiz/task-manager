@@ -78,6 +78,7 @@ function detectarColisao(args) {
 function SortableTopic({ topic, children, onDeleteTopic, onEditTopic }) {
   const color = getTopicColor(topic.cor)
   const dragTooltip = useTooltip()
+  const deleteTooltip = useTooltip()
   // Identifica o tópico no arraste.
   const {
     attributes,
@@ -136,15 +137,26 @@ function SortableTopic({ topic, children, onDeleteTopic, onEditTopic }) {
             {topic.nome}
           </button>
         </h2>
-        <button
-          type="button"
-          onClick={() => onDeleteTopic(topic)}
-          aria-label={`Excluir tópico ${topic.nome}`}
-          title="Excluir tópico"
-          className="shrink-0 rounded-lg p-2 text-muted hover:bg-white/70 hover:text-danger focus-visible:outline-2 focus-visible:outline-danger"
+        <Tooltip
+          id={deleteTooltip.id}
+          open={deleteTooltip.open}
+          wrapperProps={deleteTooltip.wrapperProps}
+          content="Excluir tópico"
+          className="shrink-0"
         >
-          <Trash2 size={18} aria-hidden="true" />
-        </button>
+          <button
+            {...deleteTooltip.triggerProps}
+            type="button"
+            onClick={(event) => {
+              deleteTooltip.triggerProps.onClick(event)
+              onDeleteTopic(topic)
+            }}
+            aria-label={`Excluir tópico ${topic.nome}`}
+            className="rounded-lg p-2 text-muted hover:text-danger focus-visible:outline-2 focus-visible:outline-danger"
+          >
+            <Trash2 size={18} aria-hidden="true" />
+          </button>
+        </Tooltip>
       </div>
       {children}
     </section>
