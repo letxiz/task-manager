@@ -2,7 +2,6 @@ import { ListChecks } from "lucide-react"
 
 function TaskEmptyState() {
   return (
-    // Apresentado quando ainda não existem tarefas nem tópicos para listar.
     <section
       aria-labelledby="tasks-empty-title"
       className="mt-6 rounded-2xl border border-dashed border-orange-300 bg-white px-6 py-12 text-center"

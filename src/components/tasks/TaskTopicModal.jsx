@@ -17,6 +17,7 @@ function TaskTopicModal({
 }) {
   const dialogRef = useRef(null)
 
+  // Foco e Escape nativos.
   useEffect(() => {
     const dialog = dialogRef.current
     if (open) dialog.showModal()
@@ -74,6 +75,7 @@ function TaskTopicModal({
             {error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}
           </div>
 
+          {/* Paleta de cinco cores. */}
           <fieldset>
             <legend className="mb-3 text-sm font-medium text-slate-700">Cor do tópico</legend>
             <div className="flex flex-wrap gap-3">

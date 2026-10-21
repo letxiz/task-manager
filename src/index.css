@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Cores globais. */
 @theme {
   --color-topic-blue: var(--color-blue-700);
   --color-topic-green: var(--color-emerald-700);

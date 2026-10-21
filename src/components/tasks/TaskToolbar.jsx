@@ -67,7 +67,6 @@ function TaskToolbar({
               <button
                 type="button"
                 onClick={() => {
-                  // Fecha o menu antes de abrir o formulário escolhido.
                   setMenuAberto(false)
                   onCreateTask()
                 }}
