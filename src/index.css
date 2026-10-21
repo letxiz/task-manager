@@ -1,5 +1,44 @@
 @import "tailwindcss";
 
+@keyframes notification-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes notification-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.notification-slide-in {
+  animation: notification-slide-in 300ms ease-out both;
+}
+
+.notification-slide-out {
+  animation: notification-slide-out 250ms ease-in both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notification-slide-in,
+  .notification-slide-out {
+    animation-duration: 0.01ms;
+  }
+}
+
 /* Cores globais. */
 @theme {
   --color-topic-blue: var(--color-blue-700);

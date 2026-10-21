@@ -6,13 +6,14 @@ import { NotificationContext } from "../../contexts/NotificationContext"
 function Notification({ message, type, onClose }) {
   const Icon = type === "info" ? Info : CheckCircle2
   const [paused, setPaused] = useState(false)
+  const [isExiting, setIsExiting] = useState(false)
+  const beginExit = useCallback(() => setIsExiting(true), [])
 
-  // Reinicia o prazo após a interação.
   useEffect(() => {
-    if (paused) return
-    const timer = setTimeout(onClose, 5000)
+    if (paused || isExiting) return
+    const timer = setTimeout(beginExit, 4000)
     return () => clearTimeout(timer)
-  }, [paused, onClose])
+  }, [beginExit, isExiting, paused])
 
   return (
     <div
@@ -22,13 +23,18 @@ function Notification({ message, type, onClose }) {
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false)
       }}
-      className="pointer-events-auto flex items-start gap-3 rounded-2xl border border-green-200 bg-white p-4 text-slate-800 shadow-lg"
+      onAnimationEnd={(event) => {
+        if (isExiting && event.animationName === "notification-slide-out") onClose()
+      }}
+      className={`pointer-events-auto flex items-start gap-3 rounded-2xl border border-green-200 bg-white p-4 text-slate-800 shadow-lg ${
+        isExiting ? "notification-slide-out" : "notification-slide-in"
+      }`}
     >
       <Icon aria-hidden="true" className={`mt-0.5 size-5 shrink-0 ${type === "info" ? "text-primary" : "text-success"}`} />
       <p className="min-w-0 flex-1 break-words text-sm leading-6">{message}</p>
       <button
         type="button"
-        onClick={onClose}
+        onClick={beginExit}
         aria-label="Fechar notificação"
         className="rounded-lg p-2 text-muted hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-primary"
       >
