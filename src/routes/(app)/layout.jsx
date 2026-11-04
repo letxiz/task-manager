@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react"
 import { Menu } from "lucide-react"
 import { Outlet } from "react-router-dom"
 import Sidebar from "../../components/layout/Sidebar"
+import WorkspaceHeader from "../../components/layout/WorkspaceHeader"
 
 function AppLayout() {
   const menuRef = useRef(null)
@@ -46,6 +47,7 @@ function AppLayout() {
         </header>
 
         <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 p-5 sm:p-8 lg:p-12">
+          <WorkspaceHeader />
           <Outlet />
         </main>
       </div>
