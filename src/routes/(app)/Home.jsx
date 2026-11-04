@@ -1,22 +1,30 @@
+import HomeHeader from "../../components/home/HomeHeader"
+import HomeSummary from "../../components/home/HomeSummary"
+import HomeTaskList from "../../components/home/HomeTaskList"
+import WaterPanel from "../../components/home/WaterPanel"
+import DetailsModal from "../../components/tasks/DetailsModal"
+import TaskFormModal from "../../components/tasks/TaskFormModal"
+import { useHomeTasks } from "../../hooks/home/useHomeTasks"
+import { useWaterTracker } from "../../hooks/home/useWaterTracker"
+
 function Home() {
+  const { dados, formulario, detalhes, verDetalhes } = useHomeTasks()
+  const agua = useWaterTracker()
+  const concluidas = dados.tarefas.filter((tarefa) => tarefa.concluida).length
+
   return (
-    <div className="space-y-8">
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Início</h1>
-
-      <section aria-labelledby="welcome-title">
-        <h2 id="welcome-title" className="text-xl font-semibold">Boas-vindas</h2>
-        {/* Adicione a apresentação. */}
-      </section>
-
-      <section aria-labelledby="summary-title">
-        <h2 id="summary-title" className="text-xl font-semibold">Resumo das tarefas</h2>
-        {/* Adicione os contadores. */}
-      </section>
-
-      <section aria-labelledby="shortcuts-title">
-        <h2 id="shortcuts-title" className="text-xl font-semibold">Atalhos</h2>
-        {/* Adicione os links. */}
-      </section>
+    <div className="space-y-7">
+      <HomeHeader onCreate={formulario.abrir} />
+      {dados.erroArmazenamento && (
+        <p role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-800">{dados.erroArmazenamento}</p>
+      )}
+      <HomeSummary total={dados.tarefas.length} concluidas={concluidas} agua={agua} />
+      <div className="grid items-stretch gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
+        <HomeTaskList tarefas={dados.tarefas} topicos={dados.topicos} onToggle={dados.alternarConclusao} onDetails={verDetalhes} onCreate={formulario.abrir} />
+        <WaterPanel agua={agua} />
+      </div>
+      <DetailsModal {...detalhes} />
+      <TaskFormModal {...formulario.props} />
     </div>
   )
 }

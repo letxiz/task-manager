@@ -12,7 +12,9 @@ Aplicação web para organizar tarefas por tópicos. O projeto está em desenvol
 - Usar a navegação responsiva, com menu lateral adaptado para dispositivos móveis.
 - Receber confirmações e avisos sobre as ações realizadas.
 
-A página inicial ainda está em construção. A lista e o gerenciamento de tarefas estão disponíveis na seção **Tarefas**.
+A página **Início** mostra o resumo das tarefas, uma prévia com até cinco itens e o acompanhamento diário de água. Os dados das tarefas são compartilhados entre as páginas. O consumo de água reinicia a cada dia, com meta ajustável e opção de desfazer o último registro.
+
+As informações ficam salvas neste navegador. Não há API ou sincronização entre dispositivos.
 
 ## Organização das branches
 
@@ -75,3 +77,13 @@ A interface tem como referência o [Task Manager no Figma](https://www.figma.com
 ## Autoria
 
 Projeto desenvolvido em parceria por [letxiz](https://github.com/letxiz) e [zeni-node](https://github.com/zeni-node).
+
+## Verificações
+
+```bash
+npm run lint
+npm test
+npm run build
+```
+
+Os testes verificam o resumo das tarefas e o armazenamento diário de água.
