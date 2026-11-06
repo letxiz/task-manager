@@ -1,12 +1,12 @@
 import { useState } from "react"
 import PropTypes from "prop-types"
-import { GripVertical, Trash2, Pencil, ChevronUp, GraduationCap, Plus } from "lucide-react"
+import { GripVertical, Trash2, Pencil, ChevronUp, GraduationCap } from "lucide-react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import Tooltip from "./Tooltip"
 import { useTooltip } from "./useTooltip"
 
-function SortableTopic({ topic, children, onDeleteTopic, onEditTopic, onCreateTask, taskCount }) {
+function SortableTopic({ topic, children, onDeleteTopic, onEditTopic, taskCount }) {
   // Controla a exibição das tarefas deste tópico.
   const [recolhido, setRecolhido] = useState(false)
   const dragTooltip = useTooltip()
@@ -63,9 +63,9 @@ function SortableTopic({ topic, children, onDeleteTopic, onEditTopic, onCreateTa
             <GripVertical size={18} aria-hidden="true" />
           </button>
         </Tooltip>
-        <h2 id={`topic-${topic.id}`} className={`min-w-0 flex-1 break-words text-sm font-semibold`}>
+        <h2 id={`topic-${topic.id}`} className={`min-w-0 flex-1 break-words text-base font-semibold`}>
           <button type="button" onClick={() => onEditTopic(topic)} aria-label={`Ver detalhes do tópico ${topic.nome}`} className="inline-flex items-center gap-2 cursor-pointer rounded-lg px-2 py-2 text-left break-words transition-colors hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-primary">
-            <GraduationCap size={18} className="shrink-0 text-primary" />{topic.nome}<span className="rounded bg-white px-2 py-0.5 text-[10px] text-muted">{taskCount}</span>
+            <GraduationCap size={18} className="shrink-0 text-primary" />{topic.nome}<span className="rounded bg-white px-2 py-0.5 text-sm text-muted">{taskCount}</span>
           </button>
         </h2>
         <button type="button" onClick={() => onEditTopic(topic)} aria-label={`Editar tópico ${topic.nome}`} className="rounded-lg p-2 text-muted hover:bg-white/70"><Pencil size={15} /></button>
@@ -80,14 +80,13 @@ function SortableTopic({ topic, children, onDeleteTopic, onEditTopic, onCreateTa
         </button>
         <button type="button" onClick={() => setRecolhido((value) => !value)} aria-label={`${recolhido ? "Expandir" : "Recolher"} tópico ${topic.nome}`} aria-expanded={!recolhido} className="rounded-lg p-2 text-muted hover:bg-white/70"><ChevronUp size={16} className={recolhido ? "rotate-180" : ""} /></button>
       </div>
-      {/* Cria uma tarefa já vinculada ao tópico. */}
-      {!recolhido && <>{children}<button type="button" onClick={() => onCreateTask(topic.id)} className="flex w-full items-center gap-2 border-t border-stone-100 px-6 py-4 text-xs text-primary hover:bg-stone-50"><Plus size={14} />Adicionar tarefa</button></>}
+      {/* Exibe as tarefas apenas quando o grupo está expandido. */}
+      {!recolhido && children}
     </section>
   )
 }
 
 SortableTopic.propTypes = {
-  onCreateTask: PropTypes.func.isRequired,
   taskCount: PropTypes.number.isRequired,
   onEditTopic: PropTypes.func.isRequired,
   onDeleteTopic: PropTypes.func.isRequired,
