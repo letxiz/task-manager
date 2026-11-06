@@ -14,7 +14,7 @@ function Home() {
 
   return (
     <div className="space-y-7">
-      <HomeHeader onCreate={formulario.abrir} />
+      <HomeHeader />
       {dados.erroArmazenamento && (
         <p role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-800">{dados.erroArmazenamento}</p>
       )}
