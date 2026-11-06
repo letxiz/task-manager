@@ -1,89 +1,84 @@
 # Task Manager
 
-Aplicação web para organizar tarefas por tópicos. O projeto está em desenvolvimento e foi criado com React e Vite.
+Aplicação web para organizar tarefas por tópicos e acompanhar o consumo diário de água. Desenvolvida com React e Vite, com interface responsiva e dados salvos no navegador.
 
 ## Funcionalidades
 
-- Criar e editar tarefas com título, descrição e data.
-- Marcar tarefas como concluídas e excluí-las.
-- Criar, editar e excluir tópicos, com cores personalizáveis.
-- Organizar tarefas por tópico e reordená-las por arrastar e soltar.
-- Salvar tarefas e tópicos no armazenamento local do navegador (`localStorage`).
-- Usar a navegação responsiva, com menu lateral adaptado para dispositivos móveis.
-- Receber confirmações e avisos sobre as ações realizadas.
+### Início
 
-A página **Início** mostra o resumo das tarefas, uma prévia com até cinco itens e o acompanhamento diário de água. Os dados das tarefas são compartilhados entre as páginas. O consumo de água reinicia a cada dia, com meta ajustável e opção de desfazer o último registro.
+- Resumo das tarefas e das conclusões.
+- Prévia de até cinco tarefas, com detalhes e controle de conclusão.
+- Controle diário de água, com meta ajustável e opção de desfazer o último registro.
 
-As informações ficam salvas neste navegador. Não há API ou sincronização entre dispositivos.
+### Minhas Tarefas
 
-## Organização das branches
+- Criar e editar tarefas com título, descrição, prazo e tópico.
+- Concluir, reabrir e excluir tarefas.
+- Criar tópicos pelo botão **Novo tópico**, ao lado de **Nova tarefa** no topo da página.
+- Editar e excluir tópicos, com seleção de cor no formulário.
+- Buscar por título ou descrição e filtrar por todas, pendentes ou concluídas.
+- Recolher e expandir grupos de tópicos.
+- Reordenar tópicos e tarefas por arrastar e soltar.
+- Consultar contadores e progresso de conclusão.
+- Limpar tarefas e tópicos com confirmação.
 
-O desenvolvimento está organizado em três branches locais, com responsabilidades previstas para cada etapa:
+### Navegação
 
-| Branch | Objetivo |
-| --- | --- |
-| `feat/layout` | Construir a estrutura visual, a sidebar, a navegação e a adaptação para dispositivos móveis, com Tailwind CSS e ícones do Lucide. |
-| `feat/inicio` | Desenvolver a página inicial, com resumo das tarefas e atalhos para as principais ações. |
-| `feat/nova-tarefa` | Implementar o formulário de cadastro, a validação dos campos e o armazenamento das novas tarefas. |
+- Menu lateral com páginas, tópicos e contadores de tarefas por tópico.
+- Clique no ícone do Task Manager para expandir ou recolher a lateral no computador.
+- No celular, abra a navegação pelo botão de menu e feche pelo ícone do Task Manager.
+- Notificações das ações realizadas e dados de tarefas compartilhados entre as páginas.
 
-Uma mesma branch pode incluir componentes, estilos e configurações necessários àquela etapa. A tabela descreve a divisão do trabalho, não o status de conclusão das funcionalidades.
+## Armazenamento
+
+Tarefas, tópicos e informações do controle de água ficam no `localStorage`. O consumo de água reinicia a cada dia. Não há API, login ou sincronização entre dispositivos. Limpar os dados do site no navegador remove as informações salvas.
 
 ## Tecnologias
 
-- React 19 e React Router — interface e navegação.
-- Vite — servidor de desenvolvimento e build.
-- Tailwind CSS — estilos.
-- dnd-kit — interações de arrastar e soltar.
-- Lucide React — ícones.
-- Poppins — tipografia.
-
-## Requisitos
-
-- Node.js compatível com a versão do Vite usada no projeto.
-- npm.
+React 19, React Router, Vite, Tailwind CSS, tailwind-variants, dnd-kit, Lucide React e Poppins. O projeto usa ESLint e o executor de testes do Node.js.
 
 ## Como executar
 
-Na pasta do projeto, instale as dependências e inicie o servidor:
+Use Node.js 24 e npm para reproduzir o ambiente validado no desenvolvimento.
 
 ```bash
+git clone https://github.com/letxiz/task-manager.git
+cd task-manager
 npm install
 npm run dev
 ```
 
-Abra no navegador o endereço exibido no terminal.
+Abra o endereço exibido pelo Vite no terminal.
 
-### Acessar em outro dispositivo da rede local
-
-Inicie o servidor aceitando conexões da rede:
+Para acessar de outro dispositivo na mesma rede:
 
 ```bash
 npm run dev -- --host 0.0.0.0
 ```
 
-Descubra o endereço IP local do computador, conecte o outro dispositivo à mesma rede e acesse `http://IP-DO-COMPUTADOR:5173` (por exemplo, `http://192.168.1.15:5173`). Talvez seja necessário permitir a conexão na configuração do firewall.
+Use o endereço de rede exibido no terminal. Se necessário, permita a conexão no firewall.
 
-## Verificações
+## Comandos
 
-```bash
-npm run lint
-npm run build
-```
+| Comando | Função |
+| --- | --- |
+| `npm run dev` | Inicia o servidor de desenvolvimento. |
+| `npm run lint` | Verifica o código com ESLint. |
+| `npm test` | Executa os testes automatizados. |
+| `npm run build` | Gera o build de produção em `dist/`. |
+| `npm run preview` | Exibe uma prévia local do build gerado. |
+
+Os testes atuais cobrem o resumo das tarefas e o armazenamento diário de água. Para conferir o build, execute `npm run build` e depois `npm run preview`.
+
+## Documentação
+
+- [Guia de uso](docs/uso.md)
+- [Guia de desenvolvimento e branches](docs/desenvolvimento.md)
 
 ## Referência de design
 
-A interface tem como referência o [Task Manager no Figma](https://www.figma.com/design/A5w7qejEx7p0jDkMsNIEg3/Task-Manager?node-id=0-1).
+Interface inspirada no [Task Manager no Figma](https://www.figma.com/design/A5w7qejEx7p0jDkMsNIEg3/Task-Manager?node-id=0-1), com adaptações de contraste, tipografia e organização das ações.
 
 ## Autoria
 
 Projeto desenvolvido em parceria por [letxiz](https://github.com/letxiz) e [zeni-node](https://github.com/zeni-node).
-
-## Verificações
-
-```bash
-npm run lint
-npm test
-npm run build
-```
-
-Os testes verificam o resumo das tarefas e o armazenamento diário de água.
