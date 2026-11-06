@@ -10,6 +10,9 @@ import UnassignedDropZone from "./UnassignedDropZone"
 
 function TaskList({
   tarefas,
+  tarefasVisiveis = tarefas,
+  filtrando = false,
+  onCreateTask,
   topicos,
   onToggle,
   onDelete,
@@ -20,6 +23,7 @@ function TaskList({
   onEditTask,
   onEditTopic,
 }) {
+  // Mantém a lista completa como base para o arraste.
   const { tarefasSemTopico, previaArraste, dragProps } = useTaskDrag({
     tarefas, topicos, onMoveTask, onReorderTasks, onReorderTopicos,
   })
@@ -34,17 +38,19 @@ function TaskList({
 
   return (
     <DndContext {...dragProps}>
-      <div className="mt-6">
-        <div className="space-y-6 rounded-3xl border border-orange-200 bg-white p-8">
+      <div>
+        {filtrando && tarefasVisiveis.length === 0 && <p role="status" className="mb-5 text-sm text-muted">Nenhuma tarefa encontrada.</p>}
+        <div className="space-y-5">
           <SortableContext
             items={topicos.map((topico) => `topic:${topico.id}`)}
             strategy={verticalListSortingStrategy}
           >
             <div className="space-y-6">
-              {topicos.map((topico) => (
-                <SortableTopic key={topico.id} topic={topico} onDeleteTopic={onDeleteTopic} onEditTopic={onEditTopic}>
+              {/* Mostra os tópicos que contêm resultados do filtro. */}
+              {topicos.filter((topico) => !filtrando || tarefasVisiveis.some((tarefa) => tarefa.topicoId === topico.id)).map((topico) => (
+                <SortableTopic key={topico.id} topic={topico} taskCount={tarefas.filter((tarefa) => tarefa.topicoId === topico.id).length} onCreateTask={onCreateTask} onDeleteTopic={onDeleteTopic} onEditTopic={onEditTopic}>
                   <TaskGroup
-                    tarefas={tarefas.filter((tarefa) => tarefa.topicoId === topico.id)}
+                    tarefas={tarefasVisiveis.filter((tarefa) => tarefa.topicoId === topico.id)}
                     topicId={topico.id}
                     onToggle={onToggle}
                     onDelete={onDelete}
@@ -55,9 +61,9 @@ function TaskList({
             </div>
           </SortableContext>
 
-          {tarefasSemTopico.length > 0 && (
+          {tarefasSemTopico.some((tarefa) => tarefasVisiveis.includes(tarefa)) && (
             <UnassignedDropZone>
-              <TaskGroup tarefas={tarefasSemTopico} topicId="" onToggle={onToggle} onDelete={onDelete} onEdit={onEditTask} />
+              <TaskGroup tarefas={tarefasSemTopico.filter((tarefa) => tarefasVisiveis.includes(tarefa))} topicId="" onToggle={onToggle} onDelete={onDelete} onEdit={onEditTask} />
             </UnassignedDropZone>
           )}
         </div>
@@ -76,6 +82,9 @@ function TaskList({
 }
 
 TaskList.propTypes = {
+  tarefasVisiveis: PropTypes.array,
+  filtrando: PropTypes.bool,
+  onCreateTask: PropTypes.func.isRequired,
   onEditTask: PropTypes.func.isRequired,
   onEditTopic: PropTypes.func.isRequired,
   onDeleteTopic: PropTypes.func.isRequired,

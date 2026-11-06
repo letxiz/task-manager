@@ -14,14 +14,15 @@ export default function WorkspaceHeader() {
     const atualizar = () => setData(new Date())
     const timer = setInterval(atualizar, 60000)
     window.addEventListener("focus", atualizar)
-    return () => {
+    // Exibe o caminho da página e a data no cabeçalho.
+  return () => {
       clearInterval(timer)
       window.removeEventListener("focus", atualizar)
     }
   }, [])
 
   return (
-    <div className="mb-7 flex flex-wrap items-center justify-between gap-3 border-b border-orange-200 pb-5 text-xs text-muted">
+    <div className="mb-7 flex flex-wrap items-center justify-between gap-3 border-b border-stone-300 pb-5 text-xs text-muted">
       <nav aria-label="Localização">
         <ol className="flex flex-wrap items-center gap-2">
           <li>

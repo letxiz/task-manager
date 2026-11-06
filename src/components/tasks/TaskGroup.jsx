@@ -4,12 +4,13 @@ import TaskItem from "./TaskItem"
 
 export default function TaskGroup({ tarefas, topicId, onToggle, onDelete, onEdit }) {
   if (tarefas.length === 0) {
-    return <p className="py-3 text-sm text-slate-500">Nenhuma tarefa neste tópico.</p>
+    return <p className="px-6 py-8 text-sm text-muted">Nenhuma tarefa neste tópico.</p>
   }
 
   return (
     <SortableContext items={tarefas.map((tarefa) => `task:${tarefa.id}`)} strategy={verticalListSortingStrategy}>
-      <ul className="mt-3 space-y-3">
+      {/* Separa as tarefas por linhas dentro do grupo. */}
+      <ul className="divide-y divide-stone-100">
         {tarefas.map((tarefa) => (
           <TaskItem key={tarefa.id} task={tarefa} topicId={topicId} onToggle={onToggle} onDelete={onDelete} onEdit={onEdit} />
         ))}
