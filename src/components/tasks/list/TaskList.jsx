@@ -52,7 +52,6 @@ function TaskList({
                   <TaskGroup
                     tarefas={tarefasVisiveis.filter((tarefa) => tarefa.topicoId === topico.id)}
                     topicId={topico.id}
-                    topicColor={topico.cor}
                     onToggle={onToggle}
                     onDelete={onDelete}
                     onEdit={onEditTask}

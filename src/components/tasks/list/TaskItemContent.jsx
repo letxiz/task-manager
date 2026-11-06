@@ -15,7 +15,7 @@ export default function TaskItemContent({ task, onToggle, onDelete, onEdit, prev
       {task.descricao && <p className="mt-1 whitespace-pre-wrap break-words text-sm text-muted">{task.descricao}</p>}
     </div>
     <div className="col-start-2 text-sm text-muted sm:col-auto"><span className="block text-sm">Prazo</span><span className="mt-1 inline-flex items-center gap-1"><CalendarDays size={12} />{task.data ? formatarDataExibicao(task.data) : "Sem prazo"}</span></div>
-    <span className={`col-start-2 w-fit rounded-full px-2 py-1 text-sm sm:col-auto ${task.concluida ? "bg-green-50 text-success" : "bg-[#edc7b9] text-primary"}`}>• {task.concluida ? "Concluída" : "Pendente"}</span>
+    <span className={`col-start-2 w-fit rounded-full px-2 py-1 text-sm sm:col-auto ${task.concluida ? "bg-emerald-100 font-medium text-emerald-800 ring-1 ring-inset ring-emerald-300" : "bg-amber-100 font-medium text-amber-800 ring-1 ring-inset ring-amber-300"}`}>• {task.concluida ? "Concluída" : "Pendente"}</span>
     <div className="col-start-3 row-start-1 flex items-center gap-1 sm:col-auto sm:row-auto">
       <ItemActions name={task.titulo} disabled={preview} onEdit={() => onEdit?.(task, true)} onDelete={() => onDelete?.(task.id)} />
     </div>

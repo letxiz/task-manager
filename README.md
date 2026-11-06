@@ -1,84 +1,124 @@
 # Task Manager
 
-Aplicação web para organizar tarefas por tópicos e acompanhar o consumo diário de água. Desenvolvida com React e Vite, com interface responsiva e dados salvos no navegador.
+**Organização de tarefas por tópicos e acompanhamento de hábitos em uma aplicação React.**
+
+Desenvolvido em parceria por [letxiz](https://github.com/letxiz) e [zeni-node](https://github.com/zeni-node). Reúne gerenciamento de tarefas, organização por arrastar e soltar e controle diário de água, com interface responsiva e persistência no navegador.
+
+[Funcionalidades](#funcionalidades) · [Decisões técnicas](#decisões-técnicas) · [Execução local](#execução-local) · [Validação](#validação)
+
+## Sobre o projeto
+
+A proposta é reunir compromissos e um hábito diário em um espaço simples de acompanhar. As tarefas podem ser organizadas em tópicos com cores, filtradas por status e consultadas por prazo. O painel inicial apresenta um resumo e permite concluir tarefas sem sair da página.
+
+O projeto exercita gerenciamento de estado compartilhado, composição de componentes, formulários, persistência local e interações de arraste. A interface passou por ajustes a partir de feedback de uso, incluindo a simplificação de ações, a redução de notificações e a paginação da lista inicial.
 
 ## Funcionalidades
 
-### Início
+### Tarefas e tópicos
 
-- Resumo das tarefas e das conclusões.
-- Prévia de até cinco tarefas, com detalhes e controle de conclusão.
-- Controle diário de água, com meta ajustável e opção de desfazer o último registro.
+- Cadastro e edição de tarefas com título, descrição, prazo e tópico opcional.
+- Conclusão, reabertura, consulta de detalhes e exclusão de tarefas.
+- Busca por título ou descrição combinada com filtros de status.
+- Tópicos com sete opções de cor e grupos que podem ser expandidos ou recolhidos.
+- Reordenação de tópicos e tarefas e movimentação entre grupos por arrastar e soltar.
+- Transformação do grupo **Sem tópico** em um tópico nomeado, mantendo suas tarefas.
+- Confirmação para excluir tópicos ou limpar todos os dados; ao excluir um tópico, suas tarefas são preservadas.
 
-### Minhas Tarefas
+### Painel inicial
 
-- Criar e editar tarefas com título, descrição, prazo e tópico.
-- Concluir, reabrir e excluir tarefas.
-- Criar tópicos pelo botão **Novo tópico**, ao lado de **Nova tarefa** no topo da página.
-- Editar e excluir tópicos, com seleção de cor no formulário.
-- Buscar por título ou descrição e filtrar por todas, pendentes ou concluídas.
-- Recolher e expandir grupos de tópicos.
-- Reordenar tópicos e tarefas por arrastar e soltar.
-- Consultar contadores e progresso de conclusão.
-- Limpar tarefas e tópicos com confirmação.
+- Resumo do total de tarefas, pendências e conclusões.
+- Lista ordenada por pendências e prazos, com seis tarefas por página.
+- Controles **Anterior** e **Próxima** exibidos somente quando há mais de seis tarefas.
+- Consulta de detalhes, edição e controle de conclusão.
+- Registro de consumo de água, meta diária ajustável e opção de desfazer o último registro.
 
-### Navegação
+### Interface
 
-- Menu lateral com páginas, tópicos e contadores de tarefas por tópico.
-- Clique no ícone do Task Manager para expandir ou recolher a lateral no computador.
-- No celular, abra a navegação pelo botão de menu e feche pelo ícone do Task Manager.
-- Notificações das ações realizadas e dados de tarefas compartilhados entre as páginas.
-
-## Armazenamento
-
-Tarefas, tópicos e informações do controle de água ficam no `localStorage`. O consumo de água reinicia a cada dia. Não há API, login ou sincronização entre dispositivos. Limpar os dados do site no navegador remove as informações salvas.
+- Navegação lateral recolhível no computador e menu para dispositivos móveis.
+- Status com texto e cores para diferenciar tarefas pendentes e concluídas.
+- Modais com fechamento por Escape, rótulos para controles e estilos de foco para navegação por teclado.
+- Notificações de criação, atualização e exclusão, sem avisos para cada fechamento ou cancelamento.
 
 ## Tecnologias
 
-React 19, React Router, Vite, Tailwind CSS, tailwind-variants, dnd-kit, Lucide React e Poppins. O projeto usa ESLint e o executor de testes do Node.js.
+| Tecnologia | Uso no projeto |
+| --- | --- |
+| React 19 | Componentes, estado e composição da interface. |
+| React Router 7 | Rotas e layout compartilhado. |
+| Tailwind CSS 4 | Estilos responsivos, tema e estados visuais. |
+| dnd-kit | Ordenação e movimentação de tarefas e tópicos. |
+| Vite 8 | Servidor de desenvolvimento e build de produção. |
+| Lucide React | Ícones da interface. |
+| Node.js Test Runner | Testes de funções de resumo, paginação e armazenamento de água. |
+| ESLint | Verificação estática do código. |
 
-## Como executar
+## Decisões técnicas
 
-Use Node.js 24 e npm para reproduzir o ambiente validado no desenvolvimento.
+**Estado compartilhado com Context e hooks.** As páginas Início e Minhas Tarefas usam o mesmo conjunto de dados por meio do `TaskProvider`. Hooks específicos concentram a lógica de persistência, formulários, modais e arraste.
+
+**Componentes organizados por responsabilidade.** A área de tarefas separa lista, controles e modais. A linha da tarefa e sua prévia de arraste compartilham o componente de conteúdo para manter a apresentação consistente.
+
+**Persistência com `localStorage`.** Tarefas, tópicos e consumo de água permanecem após recarregar a página. O controle de água considera o dia local e reinicia o consumo na mudança de dia, mantendo a meta.
+
+**Funções de dados separadas da interface.** Ordenação, resumo e paginação das tarefas podem ser testados sem renderizar componentes. A paginação ajusta a página atual quando a quantidade de tarefas diminui.
+
+## Estrutura
+
+```text
+src/
+├── components/
+│   ├── home/             # Painel inicial e controle de água
+│   ├── layout/           # Navegação e cabeçalho
+│   ├── tasks/
+│   │   ├── controls/     # Calendário, opções e tooltip
+│   │   ├── list/         # Tarefas, tópicos e componentes de arraste
+│   │   └── modals/       # Formulários e detalhes
+│   └── ui/               # Notificações e confirmação
+├── contexts/             # Contextos compartilhados
+├── hooks/                # Lógica de tarefas, formulários e hábitos
+├── routes/               # Páginas e layout das rotas
+├── constants/            # Cores e estilos compartilhados
+└── utils/                # Datas, persistência, resumo e paginação
+tests/                    # Testes automatizados
+```
+
+## Execução local
+
+Use **Node.js 24** e npm, ambiente utilizado nas verificações do projeto. Não é necessário configurar credenciais ou variáveis de ambiente.
 
 ```bash
 git clone https://github.com/letxiz/task-manager.git
 cd task-manager
-npm install
+npm ci
 npm run dev
 ```
 
-Abra o endereço exibido pelo Vite no terminal.
+Abra o endereço exibido pelo Vite no terminal. Para testar em outro dispositivo na mesma rede, use o endereço de rede informado pelo servidor.
 
-Para acessar de outro dispositivo na mesma rede:
+## Validação
 
 ```bash
-npm run dev -- --host 0.0.0.0
+npm run lint
+npm test
+npm run build
 ```
 
-Use o endereço de rede exibido no terminal. Se necessário, permita a conexão no firewall.
+Os testes automatizados cobrem resumo e ordenação das tarefas, paginação em grupos de seis, ajuste da página após remoções e armazenamento diário de água. A cobertura atual é de lógica; não há testes automatizados de interface ou de ponta a ponta.
 
-## Comandos
+Para visualizar o build de produção localmente:
 
-| Comando | Função |
-| --- | --- |
-| `npm run dev` | Inicia o servidor de desenvolvimento. |
-| `npm run lint` | Verifica o código com ESLint. |
-| `npm test` | Executa os testes automatizados. |
-| `npm run build` | Gera o build de produção em `dist/`. |
-| `npm run preview` | Exibe uma prévia local do build gerado. |
+```bash
+npm run preview
+```
 
-Os testes atuais cobrem o resumo das tarefas e o armazenamento diário de água. Para conferir o build, execute `npm run build` e depois `npm run preview`.
+## Escopo atual
 
-## Documentação
+A aplicação funciona no navegador, sem backend, autenticação ou sincronização entre dispositivos. Os dados pertencem à origem e ao perfil de navegador utilizados; limpar o armazenamento do site remove os registros. A paginação está disponível na lista do início.
+
+## Documentação e créditos
 
 - [Guia de uso](docs/uso.md)
-- [Guia de desenvolvimento e branches](docs/desenvolvimento.md)
+- [Guia de desenvolvimento e fluxo de branches](docs/desenvolvimento.md)
+- [Referência de design no Figma](https://www.figma.com/design/A5w7qejEx7p0jDkMsNIEg3/Task-Manager?node-id=0-1), adaptada durante o desenvolvimento.
 
-## Referência de design
-
-Interface inspirada no [Task Manager no Figma](https://www.figma.com/design/A5w7qejEx7p0jDkMsNIEg3/Task-Manager?node-id=0-1), com adaptações de contraste, tipografia e organização das ações.
-
-## Autoria
-
-Projeto desenvolvido em parceria por [letxiz](https://github.com/letxiz) e [zeni-node](https://github.com/zeni-node).
+Desenvolvido por [letxiz](https://github.com/letxiz) e [zeni-node](https://github.com/zeni-node).
