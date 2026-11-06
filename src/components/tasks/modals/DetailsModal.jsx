@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef } from "react"
 import PropTypes from "prop-types"
 import { Pencil, X } from "lucide-react"
-import { getTopicColor } from "../../constants/topicColors"
+import { getTopicColor } from "../../../constants/topicColors"
 
 export default function DetailsModal({ item, kind, topicName, taskCount, onClose, onEdit }) {
   const dialogRef = useRef(null)

@@ -1,7 +1,7 @@
 import PropTypes from "prop-types"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
-import { useTaskDrag } from "../../hooks/tasks/useTaskDrag"
+import { useTaskDrag } from "../../../hooks/tasks/useTaskDrag"
 import TaskEmptyState from "./TaskEmptyState"
 import TaskGroup from "./TaskGroup"
 import TaskItemPreview from "./TaskItemPreview"
@@ -21,6 +21,7 @@ function TaskList({
   onDeleteTopic,
   onEditTask,
   onEditTopic,
+  onEditUnassigned,
 }) {
   // Mantém a lista completa como base para o arraste.
   const { tarefasSemTopico, previaArraste, dragProps } = useTaskDrag({
@@ -47,10 +48,11 @@ function TaskList({
             <div className="space-y-6">
               {/* Mostra os tópicos que contêm resultados do filtro. */}
               {topicos.filter((topico) => !filtrando || tarefasVisiveis.some((tarefa) => tarefa.topicoId === topico.id)).map((topico) => (
-                <SortableTopic key={topico.id} topic={topico} taskCount={tarefas.filter((tarefa) => tarefa.topicoId === topico.id).length} onDeleteTopic={onDeleteTopic} onEditTopic={onEditTopic}>
+                <SortableTopic key={topico.id} topic={topico} onDeleteTopic={onDeleteTopic} onEditTopic={onEditTopic}>
                   <TaskGroup
                     tarefas={tarefasVisiveis.filter((tarefa) => tarefa.topicoId === topico.id)}
                     topicId={topico.id}
+                    topicColor={topico.cor}
                     onToggle={onToggle}
                     onDelete={onDelete}
                     onEdit={onEditTask}
@@ -61,7 +63,7 @@ function TaskList({
           </SortableContext>
 
           {tarefasSemTopico.some((tarefa) => tarefasVisiveis.includes(tarefa)) && (
-            <UnassignedDropZone>
+            <UnassignedDropZone onEdit={onEditUnassigned}>
               <TaskGroup tarefas={tarefasSemTopico.filter((tarefa) => tarefasVisiveis.includes(tarefa))} topicId="" onToggle={onToggle} onDelete={onDelete} onEdit={onEditTask} />
             </UnassignedDropZone>
           )}
@@ -85,6 +87,7 @@ TaskList.propTypes = {
   filtrando: PropTypes.bool,
   onEditTask: PropTypes.func.isRequired,
   onEditTopic: PropTypes.func.isRequired,
+  onEditUnassigned: PropTypes.func.isRequired,
   onDeleteTopic: PropTypes.func.isRequired,
   tarefas: PropTypes.arrayOf(
     PropTypes.shape({

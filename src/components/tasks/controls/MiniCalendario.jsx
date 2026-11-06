@@ -1,7 +1,7 @@
 import PropTypes from "prop-types"
 import { useMemo, useState } from "react"
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react"
-import { formatarDataISO, formatarDataExibicao, converterDataDigitada, aplicarMascaraData } from "../../utils/dateUtils"
+import { formatarDataISO, formatarDataExibicao, converterDataDigitada, aplicarMascaraData } from "../../../utils/dateUtils"
 
 function MiniCalendario({ valor, onSelecionar, onExpandir, onContrair }) {
   const [mesAtual, setMesAtual] = useState(() => {

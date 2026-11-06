@@ -1,6 +1,7 @@
 import PropTypes from "prop-types"
-import { CalendarDays, Check, Pencil, Trash2 } from "lucide-react"
-import { formatarDataExibicao } from "../../utils/dateUtils"
+import { CalendarDays, Check } from "lucide-react"
+import ItemActions from "../controls/ItemActions"
+import { formatarDataExibicao } from "../../../utils/dateUtils"
 
 export default function TaskItemContent({ task, onToggle, onDelete, onEdit, preview = false }) {
   // Organiza a linha com conclusão, descrição, prazo, status e ações.
@@ -16,8 +17,7 @@ export default function TaskItemContent({ task, onToggle, onDelete, onEdit, prev
     <div className="col-start-2 text-sm text-muted sm:col-auto"><span className="block text-sm">Prazo</span><span className="mt-1 inline-flex items-center gap-1"><CalendarDays size={12} />{task.data ? formatarDataExibicao(task.data) : "Sem prazo"}</span></div>
     <span className={`col-start-2 w-fit rounded-full px-2 py-1 text-sm sm:col-auto ${task.concluida ? "bg-green-50 text-success" : "bg-[#edc7b9] text-primary"}`}>• {task.concluida ? "Concluída" : "Pendente"}</span>
     <div className="col-start-3 row-start-1 flex items-center gap-1 sm:col-auto sm:row-auto">
-      <button type="button" disabled={preview} onClick={() => onEdit?.(task)} aria-label={`Editar ${task.titulo}`} className="rounded-lg p-2 text-muted hover:bg-stone-50 hover:text-primary"><Pencil size={15} /></button>
-      <button type="button" disabled={preview} onClick={() => onDelete?.(task.id)} aria-label={`Excluir ${task.titulo}`} className="rounded-lg p-2 text-muted hover:bg-red-50 hover:text-danger"><Trash2 size={15} /></button>
+      <ItemActions name={task.titulo} disabled={preview} onEdit={() => onEdit?.(task, true)} onDelete={() => onDelete?.(task.id)} />
     </div>
   </>
 }
