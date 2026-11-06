@@ -9,12 +9,13 @@
   --color-topic-rose: var(--color-rose-700);
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
-  --color-primary: var(--color-red-700);
-  --color-primary-hover: var(--color-red-800);
+  /* Paleta com mais contraste para textos e destaques. */
+  --color-primary: #ad4332;
+  --color-primary-hover: #903526;
   --color-success: var(--color-green-700);
   --color-danger-hover: var(--color-red-700);
   --color-danger: var(--color-red-600);
-  --color-muted: var(--color-slate-500);
+  --color-muted: #686057;
 }
 
 @layer base {
@@ -162,3 +163,9 @@
     font-display: swap;
   }
 }
+
+/* Uniformiza a barra de progresso entre os navegadores. */
+.task-progress { appearance: none; overflow: hidden; border-radius: 999px; background: #d8cbbd; }
+.task-progress::-webkit-progress-bar { background: #d8cbbd; }
+.task-progress::-webkit-progress-value { background: #ad4332; }
+.task-progress::-moz-progress-bar { background: #ad4332; }

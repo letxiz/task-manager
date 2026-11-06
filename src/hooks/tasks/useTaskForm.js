@@ -90,7 +90,9 @@ export function useTaskForm({ topicos, setTarefas }) {
     fecharModal(false)
   }
 
-  function abrir() {
+  function abrir(topicId) {
+    // Preenche o tópico ao usar “Adicionar tarefa” no grupo.
+    if (typeof topicId === "string") setTopicoId(topicId)
     setTarefaEditando(null)
     setErroTitulo("")
     setErroCriacaoTarefa("")
