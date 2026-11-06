@@ -6,7 +6,6 @@ import WorkspaceHeader from "../../components/layout/WorkspaceHeader"
 
 function AppLayout() {
   const menuRef = useRef(null)
-
   const closeMenu = () => menuRef.current?.close()
 
   useEffect(() => {

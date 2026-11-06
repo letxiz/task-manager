@@ -4,7 +4,7 @@ import TaskItem from "./TaskItem"
 
 export default function TaskGroup({ tarefas, topicId, onToggle, onDelete, onEdit }) {
   if (tarefas.length === 0) {
-    return <p className="px-6 py-8 text-sm text-muted">Nenhuma tarefa neste tópico.</p>
+    return <p className="px-6 py-8 text-base text-muted">Nenhuma tarefa neste tópico.</p>
   }
 
   return (
