@@ -12,8 +12,8 @@ function UnassignedDropZone({ children, onEdit }) {
     <section
       ref={setNodeRef}
       aria-labelledby="unassigned-title"
-      className={`rounded-2xl border border-dashed p-4 transition-colors ${
-        isOver ? "border-orange-400 bg-orange-50" : "border-slate-300 bg-white/60"
+      className={`overflow-hidden rounded-2xl border-2 border-dashed p-4 transition-colors ${
+        isOver ? "border-orange-400 bg-orange-50" : "border-stone-400 bg-white"
       }`}
     >
       <h2

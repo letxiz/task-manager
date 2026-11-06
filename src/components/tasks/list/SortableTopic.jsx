@@ -36,7 +36,7 @@ function SortableTopic({ topic, children, onDeleteTopic, onEditTopic }) {
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       aria-labelledby={`topic-${topic.id}`}
-      className={`overflow-hidden rounded-2xl border bg-white shadow-sm ${color.surface} transition-colors ${
+      className={`overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition-colors ${
         isOver ? "ring-2 ring-primary/30" : ""
       } ${isDragging ? "opacity-50" : ""}`}
     >
