@@ -1,6 +1,6 @@
 import PropTypes from "prop-types"
 import TaskItemContent from "./TaskItemContent"
-import { taskCardClassName } from "../../constants/taskStyles"
+import { taskCardClassName } from "../../../constants/taskStyles"
 
 function TaskItemPreview({ task, width, height }) {
   return (

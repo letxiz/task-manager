@@ -22,17 +22,17 @@ function Notification({ message, type, onClose }) {
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false)
       }}
-      className="pointer-events-auto flex items-start gap-3 rounded-2xl border border-green-200 bg-white p-4 text-slate-800 shadow-lg"
+      className="pointer-events-auto flex items-center gap-2.5 rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-stone-800 shadow-md"
     >
-      <Icon aria-hidden="true" className={`mt-0.5 size-5 shrink-0 ${type === "info" ? "text-primary" : "text-success"}`} />
-      <p className="min-w-0 flex-1 break-words text-sm leading-6">{message}</p>
+      <Icon aria-hidden="true" className={`size-[18px] shrink-0 ${type === "info" ? "text-primary" : "text-success"}`} />
+      <p className="min-w-0 flex-1 break-words text-sm leading-5">{message}</p>
       <button
         type="button"
         onClick={onClose}
         aria-label="Fechar notificação"
-        className="rounded-lg p-2 text-muted hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-primary"
+        className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted hover:bg-stone-100 focus-visible:outline-2 focus-visible:outline-primary"
       >
-        <X aria-hidden="true" size={18} />
+        <X aria-hidden="true" size={16} />
       </button>
     </div>
   )
@@ -70,7 +70,7 @@ export function NotificationProvider({ children }) {
         role="status"
         aria-live="polite"
         aria-atomic="true"
-        className="pointer-events-none fixed inset-auto right-4 top-4 z-50 m-0 w-[calc(100%-2rem)] overflow-visible border-0 bg-transparent p-0 sm:w-96"
+        className="pointer-events-none fixed inset-auto right-4 top-4 z-50 m-0 h-fit w-[calc(100%-2rem)] max-w-sm overflow-visible border-0 bg-transparent p-0"
       >
         {notification && (
           <Notification key={notification.id} message={notification.message} type={notification.type} onClose={close} />

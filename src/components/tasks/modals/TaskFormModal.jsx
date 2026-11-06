@@ -1,7 +1,7 @@
 import PropTypes from "prop-types"
 import { useEffect, useRef } from "react"
 import { AlertCircle, X } from "lucide-react"
-import MiniCalendario from "./MiniCalendario"
+import MiniCalendario from "../controls/MiniCalendario"
 
 function TaskFormModal({
   editing = false,

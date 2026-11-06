@@ -2,7 +2,7 @@ import PropTypes from "prop-types"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import TaskItemContent from "./TaskItemContent"
-import { taskCardClassName } from "../../constants/taskStyles"
+import { taskCardClassName } from "../../../constants/taskStyles"
 
 function TaskItem({ task, topicId, onToggle, onDelete, onEdit }) {
   // Identifica a tarefa no arraste.

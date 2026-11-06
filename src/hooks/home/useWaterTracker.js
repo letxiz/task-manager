@@ -37,7 +37,7 @@ export function useWaterTracker() {
     try {
       localStorage.setItem(WATER_STORAGE_KEY, JSON.stringify(proximo))
       setErro("")
-      notify(mensagem)
+      if (mensagem) notify(mensagem)
     } catch {
       setErro("Não foi possível salvar o consumo. As alterações podem ser perdidas ao sair da página.")
     }
@@ -45,14 +45,14 @@ export function useWaterTracker() {
 
   function adicionar(quantidade) {
     const dia = registroDoDia(registro)
-    salvar({ ...dia, quantidades: [...dia.quantidades, quantidade] }, `${quantidade} ml de água registrados.`)
+    salvar({ ...dia, quantidades: [...dia.quantidades, quantidade] })
   }
 
   // Remove apenas o último consumo.
   function desfazer() {
     const dia = registroDoDia(registro)
     if (!dia.quantidades.length) return
-    salvar({ ...dia, quantidades: dia.quantidades.slice(0, -1) }, "Último registro de água removido.")
+    salvar({ ...dia, quantidades: dia.quantidades.slice(0, -1) })
   }
 
   function alterarMeta(meta) {
