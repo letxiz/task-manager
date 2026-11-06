@@ -39,7 +39,7 @@ export default function HomeTaskList({ tarefas, topicos, onToggle, onDetails, on
                   <span className={`block break-words text-sm font-medium ${tarefa.concluida ? "text-muted line-through" : "text-slate-800"}`}>{tarefa.titulo}</span>
                   <span className="mt-1 block break-words text-xs text-muted">{topico?.nome || "Sem tópico"} · {prazo}{atrasada ? " · Prazo vencido" : ""}</span>
                 </button>
-                <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-medium ${tarefa.concluida ? "bg-green-50 text-success" : "bg-orange-100 text-primary"}`}>{tarefa.concluida ? "Concluída" : "Pendente"}</span>
+                <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-medium ${tarefa.concluida ? "bg-emerald-100 font-medium text-emerald-800 ring-1 ring-inset ring-emerald-300" : "bg-amber-100 font-medium text-amber-800 ring-1 ring-inset ring-amber-300"}`}>{tarefa.concluida ? "Concluída" : "Pendente"}</span>
               </li>
             )
           })}
