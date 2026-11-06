@@ -25,7 +25,7 @@ function Tasks() {
   return (
     <div className="flex min-h-[calc(100dvh-190px)] flex-col">
       {erroArmazenamento && (
-        <p role="alert" className="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-800">
+        <p role="alert" className="mt-4 rounded-xl bg-red-50 p-4 text-base text-red-800">
           {erroArmazenamento}
         </p>
       )}
@@ -38,17 +38,17 @@ function Tasks() {
         onCreateTask={formularioTarefa.abrir}
         onCreateTopic={formularioTopico.abrir}
       />
+      {/* Fontes maiores mantêm os controles legíveis. */}
       {/* Filtros e busca atualizam a lista sem alterar os dados salvos. */}
       <div className="my-8 flex flex-wrap items-center justify-between gap-4">
-        <div role="group" aria-label="Filtrar tarefas por status" className="flex rounded-lg bg-[#e0d5c9] p-1 text-xs">
+        <div role="group" aria-label="Filtrar tarefas por status" className="flex rounded-lg bg-[#e0d5c9] p-1 text-sm">
           {[["todas", "Todas", tarefas.length], ["pendentes", "Pendentes", tarefas.length - concluidas], ["concluidas", "Concluídas", concluidas]].map(([value, label, count]) => <button key={value} type="button" aria-pressed={filtro === value} onClick={() => setFiltro(value)} className={`rounded-md px-4 py-2 ${filtro === value ? "bg-white font-medium text-stone-800 shadow-sm" : "text-muted"}`}>{label}<span className="ml-2 text-primary">{count}</span></button>)}
         </div>
-        <label className="flex items-center gap-2 rounded-lg border border-stone-300 bg-white px-3 py-2 text-muted"><Search size={16} /><input aria-label="Buscar tarefas" placeholder="Buscar tarefas..." value={busca} onChange={(event) => setBusca(event.target.value)} className="w-48 bg-transparent text-xs outline-none focus-visible:ring-2 focus-visible:ring-primary" /></label>
+        <label className="flex items-center gap-2 rounded-lg border border-stone-300 bg-white px-3 py-2 text-muted"><Search size={16} /><input aria-label="Buscar tarefas" placeholder="Buscar tarefas..." value={busca} onChange={(event) => setBusca(event.target.value)} className="w-48 bg-transparent text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary" /></label>
       </div>
       <TaskList
         tarefasVisiveis={visiveis}
         filtrando={Boolean(busca.trim()) || filtro !== "todas"}
-        onCreateTask={(id) => formularioTarefa.abrir(id)}
         tarefas={tarefas}
         topicos={topicos}
         onToggle={dados.alternarConclusao}
@@ -60,9 +60,9 @@ function Tasks() {
         onReorderTopicos={dados.setTopicos}
         onDeleteTopic={dialogos.solicitarExclusaoTopico}
       />
-      {topicos.length > 0 && <p className="mt-7 flex items-center gap-2 text-xs text-muted"><GripVertical size={12} />Arraste os tópicos para organizar do seu jeito.</p>}
+      {topicos.length > 0 && <p className="mt-7 flex items-center gap-2 text-sm text-muted"><GripVertical size={12} />Arraste os tópicos para organizar do seu jeito.</p>}
       {/* Mostra o resumo e o progresso no fim da página. */}
-      <footer className="mt-auto flex flex-wrap items-center justify-between gap-4 pt-16 text-xs text-muted">
+      <footer className="mt-auto flex flex-wrap items-center justify-between gap-4 pt-16 text-sm text-muted">
         <span>{tarefas.length} {tarefas.length === 1 ? "tarefa" : "tarefas"} em {topicos.length} {topicos.length === 1 ? "tópico" : "tópicos"}</span>
         <span className="flex items-center gap-3">{concluidas} de {tarefas.length} concluída{tarefas.length === 1 ? "" : "s"}<progress aria-label="Progresso das tarefas" value={concluidas} max={tarefas.length || 1} className="task-progress h-1 w-24" /></span>
       </footer>

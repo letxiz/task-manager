@@ -12,7 +12,6 @@ function TaskList({
   tarefas,
   tarefasVisiveis = tarefas,
   filtrando = false,
-  onCreateTask,
   topicos,
   onToggle,
   onDelete,
@@ -48,7 +47,7 @@ function TaskList({
             <div className="space-y-6">
               {/* Mostra os tópicos que contêm resultados do filtro. */}
               {topicos.filter((topico) => !filtrando || tarefasVisiveis.some((tarefa) => tarefa.topicoId === topico.id)).map((topico) => (
-                <SortableTopic key={topico.id} topic={topico} taskCount={tarefas.filter((tarefa) => tarefa.topicoId === topico.id).length} onCreateTask={onCreateTask} onDeleteTopic={onDeleteTopic} onEditTopic={onEditTopic}>
+                <SortableTopic key={topico.id} topic={topico} taskCount={tarefas.filter((tarefa) => tarefa.topicoId === topico.id).length} onDeleteTopic={onDeleteTopic} onEditTopic={onEditTopic}>
                   <TaskGroup
                     tarefas={tarefasVisiveis.filter((tarefa) => tarefa.topicoId === topico.id)}
                     topicId={topico.id}
@@ -84,7 +83,6 @@ function TaskList({
 TaskList.propTypes = {
   tarefasVisiveis: PropTypes.array,
   filtrando: PropTypes.bool,
-  onCreateTask: PropTypes.func.isRequired,
   onEditTask: PropTypes.func.isRequired,
   onEditTopic: PropTypes.func.isRequired,
   onDeleteTopic: PropTypes.func.isRequired,
