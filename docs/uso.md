@@ -8,13 +8,13 @@ Para cadastrar uma tarefa, clique em **Nova tarefa**, preencha o título e, se d
 
 ## Acompanhar tarefas
 
-Use a caixa de seleção para concluir ou reabrir uma tarefa. Clique no título ou no ícone de lápis para abrir seus detalhes e acessar a edição. O ícone de lixeira exclui a tarefa.
+Use a caixa de seleção para concluir ou reabrir uma tarefa. Clique no título para abrir os detalhes. Na lista de tarefas, use o botão de três pontos para editar ou excluir.
 
-Os filtros **Todas**, **Pendentes** e **Concluídas** podem ser combinados com a busca por título ou descrição. Os contadores gerais continuam representando o conjunto completo de tarefas.
+Os filtros **Todas**, **Pendentes** e **Concluídas** podem ser combinados com a busca por título ou descrição. Os contadores dos filtros representam o conjunto completo de tarefas.
 
 ## Organizar tópicos
 
-Use a seta no cabeçalho para recolher ou expandir o grupo. O cabeçalho também oferece ações para consultar detalhes e excluir o tópico.
+Use a seta no cabeçalho para recolher ou expandir o grupo. Clique no nome do tópico para abrir as opções de editar e excluir. Clique em **Sem tópico** para nomear o grupo e manter suas tarefas no novo tópico.
 
 Arraste o tópico pela alça para mudar sua posição. As tarefas também podem ser reordenadas ou movidas entre tópicos por arraste.
 
@@ -22,9 +22,13 @@ Arraste o tópico pela alça para mudar sua posição. As tarefas também podem 
 
 ## Usar a navegação
 
-No computador, o ícone do Task Manager expande e recolhe a barra lateral. Os tópicos aparecem com seus respectivos contadores quando ela está expandida.
+No computador, o ícone do Task Manager expande e recolhe a barra lateral.
 
 No celular, use o botão de menu no cabeçalho para abrir a navegação. Clique no ícone do Task Manager para fechá-la.
+
+## Paginação no início
+
+O painel **Suas tarefas** mostra até seis tarefas por página, priorizando pendências e prazos. Com mais de seis tarefas, use **Anterior** e **Próxima** no rodapé. Com até seis, esses controles ficam ocultos.
 
 ## Acompanhar o consumo de água
 

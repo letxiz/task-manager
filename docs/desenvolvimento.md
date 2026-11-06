@@ -14,7 +14,7 @@
 | `src/constants/` | Paleta de tópicos e estilos compartilhados. |
 | `src/utils/` | Datas, persistência e funções auxiliares. |
 | `src/index.css` | Tema global e fontes. |
-| `tests/` | Testes do resumo de tarefas e armazenamento de água. |
+| `tests/` | Testes do resumo, paginação de tarefas e armazenamento de água. |
 
 Os dados de tarefas são compartilhados pelo `TaskProvider`. A persistência usa o armazenamento local do navegador; não é necessário configurar um backend ou credenciais para executar o projeto.
 
