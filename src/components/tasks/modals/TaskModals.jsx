@@ -1,5 +1,5 @@
 import PropTypes from "prop-types"
-import ConfirmDialog from "../ui/ConfirmDialog"
+import ConfirmDialog from "../../ui/ConfirmDialog"
 import DetailsModal from "./DetailsModal"
 import TaskFormModal from "./TaskFormModal"
 import TaskTopicModal from "./TaskTopicModal"

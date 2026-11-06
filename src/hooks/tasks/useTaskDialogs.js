@@ -14,8 +14,8 @@ export function useTaskDialogs(dados, formularioTarefa, formularioTopico) {
 
   return {
     limpar,
-    verTarefa: (item) => setDetalhes({ kind: "task", item }),
-    verTopico: (item) => setDetalhes({ kind: "topic", item }),
+    verTarefa: (item, editar = false) => editar ? formularioTarefa.editar(item) : setDetalhes({ kind: "task", item }),
+    verTopico: (item, editar = false) => editar ? formularioTopico.editar(item) : setDetalhes({ kind: "topic", item }),
     solicitarExclusaoTopico: setTopicoParaExcluir,
     detalhes: {
       item: detalhes?.item ?? null,
@@ -24,7 +24,6 @@ export function useTaskDialogs(dados, formularioTarefa, formularioTopico) {
       taskCount: tarefas.filter((tarefa) => tarefa.topicoId === detalhes?.item.id).length,
       onClose: () => {
         setDetalhes(null)
-        notify("Visualização de detalhes cancelada.", "info")
       },
       onEdit: () => {
         if (!detalhes) return
@@ -40,7 +39,6 @@ export function useTaskDialogs(dados, formularioTarefa, formularioTopico) {
       confirmLabel: "Excluir tópico",
       onCancel: () => {
         setTopicoParaExcluir(null)
-        notify("Exclusão do tópico cancelada.", "info")
       },
       onConfirm: () => {
         if (!topicoParaExcluir) return
@@ -56,7 +54,6 @@ export function useTaskDialogs(dados, formularioTarefa, formularioTopico) {
       message: "Todas as tarefas e tópicos serão removidos. Essa ação não pode ser desfeita.",
       onCancel: () => {
         setConfirmacaoAberta(false)
-        notify("Exclusão cancelada. Suas tarefas foram mantidas.", "info")
       },
       onConfirm: () => {
         const tarefasSalvas = setTarefas([])

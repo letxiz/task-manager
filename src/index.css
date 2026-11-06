@@ -7,6 +7,8 @@
   --color-topic-purple: var(--color-violet-700);
   --color-topic-amber: var(--color-amber-700);
   --color-topic-rose: var(--color-rose-700);
+  --color-topic-cyan: var(--color-cyan-700);
+  --color-topic-orange: var(--color-orange-700);
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
   /* Paleta com mais contraste para textos e destaques. */

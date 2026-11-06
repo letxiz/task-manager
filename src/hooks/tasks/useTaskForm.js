@@ -1,9 +1,7 @@
 import { useState } from "react"
-import { useNotification } from "../../contexts/NotificationContext"
 import { gerarIdSeguro } from "../../utils/generateId"
 
 export function useTaskForm({ topicos, setTarefas }) {
-  const notify = useNotification()
   const [tarefaEditando, setTarefaEditando] = useState(null)
   const [modalAberto, setModalAberto] = useState(false)
   const [janelaExpandida, setJanelaExpandida] = useState(false)
@@ -14,12 +12,11 @@ export function useTaskForm({ topicos, setTarefas }) {
   const [erroCriacaoTarefa, setErroCriacaoTarefa] = useState("")
   const [topicoId, setTopicoId] = useState("")
   const [cor, setCor] = useState("#ef4444")
-  function fecharModal(notificar = true) {
+  function fecharModal() {
     setErroTitulo("")
     setErroCriacaoTarefa("")
     setJanelaExpandida(false)
     setModalAberto(false)
-    if (notificar) notify(tarefaEditando ? "Edição da tarefa cancelada. Nenhuma alteração foi aplicada." : "Cadastro cancelado. O rascunho foi mantido.", "info")
     if (tarefaEditando) {
       setTitulo("")
       setDescricao("")
@@ -56,7 +53,7 @@ export function useTaskForm({ topicos, setTarefas }) {
       setTarefas((atuais) => atuais.map((tarefa) => tarefa.id === tarefaEditando
         ? { ...tarefa, titulo: tituloValido, descricao: descricao.trim(), data, topicoId }
         : tarefa), "Tarefa atualizada com sucesso.")
-      fecharModal(false)
+      fecharModal()
       return
     }
 
@@ -87,7 +84,7 @@ export function useTaskForm({ topicos, setTarefas }) {
     setTopicoId("")
     setCor("#ef4444")
     setErroTitulo("")
-    fecharModal(false)
+    fecharModal()
   }
 
   function abrir(topicId) {

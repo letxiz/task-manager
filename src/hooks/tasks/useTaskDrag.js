@@ -1,11 +1,9 @@
 import { useState } from "react"
 import { KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
-import { useNotification } from "../../contexts/NotificationContext"
 import { detectarColisao } from "../../utils/taskCollision"
 
 export function useTaskDrag({ tarefas, topicos, onMoveTask, onReorderTasks, onReorderTopicos }) {
-  const notify = useNotification()
   const [previaArraste, setPreviaArraste] = useState(null)
 
   // Pressão longa evita arraste ao rolar.
@@ -118,7 +116,6 @@ export function useTaskDrag({ tarefas, topicos, onMoveTask, onReorderTasks, onRe
       onDragEnd: handleDragEnd,
       onDragCancel: () => {
         setPreviaArraste(null)
-        notify("Movimentação cancelada.", "info")
       },
     },
   }
