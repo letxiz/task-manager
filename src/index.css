@@ -10,6 +10,8 @@
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --color-primary: var(--color-red-700);
+  --color-water: #489eaa;
+  --color-water-track: #e4f3f4;
   --color-primary-hover: var(--color-red-800);
   --color-success: var(--color-green-700);
   --color-danger-hover: var(--color-red-700);

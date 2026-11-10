@@ -9,7 +9,7 @@ function SummaryCard({ value, title, description, icon, water = false }) {
           {value}
         </span>
 
-        <span className={`rounded-lg p-2 ${water ? "bg-slate-100 text-blue-700" : "bg-orange-100 text-primary"}`}>
+        <span className={`rounded-lg p-2 ${water ? "bg-slate-100 text-water" : "bg-orange-100 text-primary"}`}>
           {icon}
         </span>
       </div>
