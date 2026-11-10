@@ -1,15 +1,15 @@
 import PropTypes from "prop-types"
 
 // Visual compartilhado pelos cards.
-function SummaryCard({ value, title, description, icon }) {
+function SummaryCard({ value, title, description, icon, water = false }) {
   return (
-    <article className="rounded-2xl border border-orange-200 bg-white p-5 transition duration-200 hover:-translate-y-1 hover:border-primary/30 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
+    <article className={`rounded-2xl border bg-white p-5 transition duration-200 hover:-translate-y-1 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none border-orange-200 hover:border-primary/30`}>
       <div className="flex items-center justify-between gap-4">
         <span className="text-3xl font-semibold text-slate-800">
           {value}
         </span>
 
-        <span className="rounded-lg bg-orange-100 p-2 text-primary">
+        <span className={`rounded-lg p-2 ${water ? "bg-slate-100 text-blue-700" : "bg-orange-100 text-primary"}`}>
           {icon}
         </span>
       </div>
@@ -28,6 +28,7 @@ SummaryCard.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   icon: PropTypes.node.isRequired,
+  water: PropTypes.bool,
 }
 
 export default SummaryCard
