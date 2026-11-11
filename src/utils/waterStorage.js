@@ -1,6 +1,7 @@
 export const WATER_STORAGE_KEY = "consumo-agua"
 export const DEFAULT_WATER_GOAL = 2500
 
+// Usa a data local: converter para UTC poderia mudar o dia perto da meia-noite.
 export function diaLocal(data = new Date()) {
   const ano = data.getFullYear()
   const mes = String(data.getMonth() + 1).padStart(2, "0")
@@ -18,7 +19,7 @@ export function carregarAgua(storage, dia = diaLocal()) {
   try {
     const texto = storage.getItem(WATER_STORAGE_KEY)
     if (texto === null) return { registro: vazio, erro: "" }
-    // Valida os dados antes de usar.
+    // O armazenamento pode conter dados antigos ou editados; valida antes de calcular o consumo.
     const registro = JSON.parse(texto)
     if (!registro || typeof registro.dia !== "string" ||
         !Number.isInteger(registro.meta) || registro.meta < 100 || registro.meta > 10000 ||

@@ -7,14 +7,19 @@ export function useHomeTasks() {
   const formulario = useTaskForm(dados)
   const [detalhesId, setDetalhesId] = useState(null)
   // Busca os detalhes na lista atual.
-  const selecionada = dados.tarefas.find((tarefa) => tarefa.id === detalhesId) ?? null
+  const selecionada =
+    dados.tarefas.find((tarefa) => tarefa.id === detalhesId) ?? null
 
   return {
-    dados, formulario,
+    dados,
+    formulario,
     verDetalhes: (tarefa) => setDetalhesId(tarefa.id),
     detalhes: {
-      item: selecionada, kind: "task",
-      topicName: dados.topicos.find((topico) => topico.id === selecionada?.topicoId)?.nome,
+      item: selecionada,
+      kind: "task",
+      topicName: dados.topicos.find(
+        (topico) => topico.id === selecionada?.topicoId
+      )?.nome,
       onClose: () => {
         setDetalhesId(null)
       },
