@@ -14,11 +14,11 @@ function SummaryCard({ value, title, description, icon, water = false }) {
         </span>
       </div>
 
-      <h2 className="mt-4 text-sm font-medium text-slate-800">
+      <h2 className="mt-4 text-base font-medium text-slate-800">
         {title}
       </h2>
 
-      <p className="mt-1 text-xs text-muted">{description}</p>
+      <p className="mt-1 text-sm text-muted">{description}</p>
     </article>
   )
 }

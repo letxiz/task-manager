@@ -22,12 +22,12 @@ export default function WorkspaceHeader() {
   }, [])
 
   return (
-    <div className="mb-7 flex flex-wrap items-center justify-between gap-3 border-b border-stone-300 pb-5 text-xs text-muted">
+    <div className="mb-7 flex flex-wrap items-center justify-between gap-3 border-b border-stone-300 pb-5 text-sm text-muted">
       <nav aria-label="Localização">
         <ol className="flex flex-wrap items-center gap-2">
           <li>
             <Link to="/" className="inline-flex min-h-9 items-center gap-2 rounded-lg px-2 transition-colors hover:bg-orange-100 hover:text-primary focus-visible:outline-2 focus-visible:outline-primary">
-              <LayoutGrid size={14} aria-hidden="true" />Meu espaço
+              <LayoutGrid size={16} aria-hidden="true" />Meu espaço
             </Link>
           </li>
           <li aria-hidden="true"><ChevronRight size={14} /></li>
@@ -35,7 +35,7 @@ export default function WorkspaceHeader() {
         </ol>
       </nav>
       <time dateTime={formatarDataISO(data)} className="inline-flex items-center gap-2">
-        <CalendarDays size={14} aria-hidden="true" />
+        <CalendarDays size={16} aria-hidden="true" />
         {data.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
       </time>
     </div>
