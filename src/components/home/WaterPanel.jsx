@@ -13,18 +13,18 @@ export default function WaterPanel({ agua }) {
     <section aria-labelledby="water-title" className="rounded-2xl border border-orange-200 bg-white p-5 sm:p-6 transition duration-200 hover:-translate-y-1 hover:border-primary/30 hover:shadow-md focus-within:border-primary/30 focus-within:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
       <header className="flex items-start justify-between gap-3">
         <div><h2 id="water-title" className="text-lg font-semibold">Água</h2><p className="mt-1 text-xs leading-5 text-muted">Cuidar de você também é prioridade.</p></div>
-        <Droplet size={20} className="mt-1 shrink-0 text-primary" aria-hidden="true" />
+        <Droplet size={20} className="mt-1 shrink-0 text-water" aria-hidden="true" />
       </header>
       <div className="relative mx-auto my-6 size-40">
         <svg viewBox="0 0 160 160" className="size-full -rotate-90" aria-hidden="true">
-          <circle cx="80" cy="80" r="68" fill="none" stroke="currentColor" strokeWidth="8" className="text-orange-100" />
+          <circle cx="80" cy="80" r="68" fill="none" stroke="currentColor" strokeWidth="8" className="text-water-track" />
           <circle cx="80" cy="80" r="68" fill="none" stroke="currentColor" strokeWidth="8" pathLength="100"
-            strokeDasharray={`${agua.porcentagem} 100`} strokeLinecap="round" className="text-primary transition-all duration-300 motion-reduce:transition-none" />
+            strokeDasharray={`${agua.porcentagem} 100`} strokeLinecap="round" className="text-water transition-all duration-300 motion-reduce:transition-none" />
         </svg>
         <div role="progressbar" aria-label="Meta diária de água" aria-valuemin={0} aria-valuemax={100} aria-valuenow={agua.porcentagem}
           aria-valuetext={`${formatarLitros(agua.total)} de ${formatarLitros(agua.meta)}`}
           className="absolute inset-0 flex flex-col items-center justify-center">
-          <Droplet size={18} className="text-primary" aria-hidden="true" />
+          <Droplet size={18} className="text-water" aria-hidden="true" />
           <span className="mt-1 text-3xl font-semibold">{agua.porcentagem}%</span>
           <span className="mt-1 text-xs text-muted">da meta diária</span>
         </div>
@@ -39,7 +39,7 @@ export default function WaterPanel({ agua }) {
         {[100, 250, 500, 1000].map((quantidade) => (
           <button key={quantidade} type="button" onClick={() => agua.adicionar(quantidade)}
             aria-label={`Registrar ${quantidade} ml de água`}
-            className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${quantidade === 250 ? "border-primary bg-primary text-white hover:bg-primary-hover" : "border-orange-200 bg-orange-50/50 text-primary hover:bg-orange-100"}`}>
+            className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${quantidade === 250 ? "border-primary bg-primary text-white hover:bg-primary-hover" : "border-slate-200 bg-primary/5 text-primary hover:bg-primary/10"}`}>
             <Plus size={14} aria-hidden="true" />{quantidade === 1000 ? "1 litro" : `${quantidade} ml`}
           </button>
         ))}

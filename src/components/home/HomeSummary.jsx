@@ -10,7 +10,7 @@ export default function HomeSummary({ total, concluidas, agua }) {
       <SummaryCard value={total} title="Total de tarefas" description="Tudo o que você está organizando" icon={<ListTodo size={20} aria-hidden="true" />} />
       <SummaryCard value={concluidas} title="Tarefas concluídas" description="Cada conquista conta" icon={<CircleCheck size={20} aria-hidden="true" />} />
       <SummaryCard value={total - concluidas} title="Tarefas pendentes" description="Um passo de cada vez" icon={<Clock size={20} aria-hidden="true" />} />
-      <SummaryCard value={`${agua.porcentagem}%`} title="Meta de água" description={`${formatarLitros(agua.total)} de ${formatarLitros(agua.meta)}`} icon={<Droplet size={20} aria-hidden="true" />} />
+      <SummaryCard water value={`${agua.porcentagem}%`} title="Meta de água" description={`${formatarLitros(agua.total)} de ${formatarLitros(agua.meta)}`} icon={<Droplet size={20} aria-hidden="true" />} />
     </section>
   )
 }
