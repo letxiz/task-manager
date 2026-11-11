@@ -14,6 +14,8 @@
   /* Paleta com mais contraste para textos e destaques. */
   --color-primary: #ad4332;
   --color-primary-hover: #903526;
+  --color-water: #489eaa;
+  --color-water-track: #e4f3f4;
   --color-success: var(--color-green-700);
   --color-danger-hover: var(--color-red-700);
   --color-danger: var(--color-red-600);
