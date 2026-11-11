@@ -16,11 +16,26 @@ function Home() {
     <div className="space-y-7">
       <HomeHeader />
       {dados.erroArmazenamento && (
-        <p role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-800">{dados.erroArmazenamento}</p>
+        <p
+          role="alert"
+          className="rounded-xl bg-red-50 p-4 text-sm text-red-800"
+        >
+          {dados.erroArmazenamento}
+        </p>
       )}
-      <HomeSummary total={dados.tarefas.length} concluidas={concluidas} agua={agua} />
+      <HomeSummary
+        total={dados.tarefas.length}
+        concluidas={concluidas}
+        agua={agua}
+      />
       <div className="grid items-stretch gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
-        <HomeTaskList tarefas={dados.tarefas} topicos={dados.topicos} onToggle={dados.alternarConclusao} onDetails={verDetalhes} onCreate={formulario.abrir} />
+        <HomeTaskList
+          tarefas={dados.tarefas}
+          topicos={dados.topicos}
+          onToggle={dados.alternarConclusao}
+          onDetails={verDetalhes}
+          onCreate={formulario.abrir}
+        />
         <WaterPanel agua={agua} />
       </div>
       <DetailsModal {...detalhes} />
