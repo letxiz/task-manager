@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import { resumirTarefas } from "../src/utils/homeTasks.js"
+import { resumirTarefas, paginarTarefas } from "../src/utils/homeTasks.js"
 
 test("lista vazia produz contadores e progresso zerados", () => {
   assert.deepEqual(resumirTarefas([]), { total: 0, concluidas: 0, porcentagem: 0, visiveis: [] })
@@ -30,4 +30,30 @@ test("concluir, reabrir e excluir refletem no resumo", () => {
   assert.equal(resumirTarefas([{ ...tarefa, concluida: true }]).porcentagem, 100)
   assert.equal(resumirTarefas([tarefa]).concluidas, 0)
   assert.equal(resumirTarefas([]).total, 0)
+})
+
+
+test("paginação permite acessar todas as tarefas em páginas de seis", () => {
+  const tarefas = Array.from({ length: 13 }, (_, index) => ({ id: String(index), concluida: false }))
+  const paginas = [1, 2, 3].map((pagina) => paginarTarefas(tarefas, pagina))
+  assert.deepEqual(paginas.map((pagina) => pagina.visiveis.length), [6, 6, 1])
+  assert.deepEqual(paginas.flatMap((pagina) => pagina.visiveis), tarefas)
+  assert.equal(paginas[2].primeiro, 13)
+  assert.equal(paginas[2].ultimo, 13)
+  assert.equal(paginas[0].totalPaginas, 3)
+})
+
+test("página é ajustada após remoções e lista vazia não gera página inválida", () => {
+  const tarefas = Array.from({ length: 6 }, (_, index) => ({ id: String(index), concluida: index === 0 }))
+  const pagina = paginarTarefas(tarefas, 2)
+  assert.equal(pagina.paginaAtual, 1)
+  assert.equal(pagina.total, 6)
+  assert.equal(pagina.concluidas, 1)
+  assert.equal(pagina.visiveis.length, 6)
+  const vazia = paginarTarefas([], 3)
+  assert.equal(vazia.paginaAtual, 1)
+  assert.equal(vazia.totalPaginas, 1)
+  assert.equal(vazia.primeiro, 0)
+  assert.equal(vazia.ultimo, 0)
+  assert.deepEqual(vazia.visiveis, [])
 })

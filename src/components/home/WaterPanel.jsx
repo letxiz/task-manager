@@ -1,12 +1,10 @@
 import { useState } from "react"
 import PropTypes from "prop-types"
 import { Droplet, Heart, Plus, Settings2, Undo2 } from "lucide-react"
-import { useNotification } from "../../contexts/NotificationContext"
 import { formatarLitros } from "../../utils/waterStorage"
 import WaterGoalModal from "./WaterGoalModal"
 
 export default function WaterPanel({ agua }) {
-  const notify = useNotification()
   const [metaAberta, setMetaAberta] = useState(false)
   // Não mostra saldo negativo.
   const falta = Math.max(0, agua.meta - agua.total)
@@ -51,9 +49,8 @@ export default function WaterPanel({ agua }) {
         <button type="button" onClick={() => setMetaAberta(true)} className="inline-flex min-h-10 items-center gap-1 rounded-lg px-2 text-xs text-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-primary"><Settings2 size={14} aria-hidden="true" />Ajustar meta</button>
       </div>
       <p className="mt-3 flex items-center justify-center gap-1 text-xs text-muted"><Heart size={13} aria-hidden="true" />Pequenas pausas fazem bem.</p>
-      {metaAberta && <WaterGoalModal open goal={agua.meta} onSave={agua.alterarMeta} onCancel={(notificar = true) => {
+      {metaAberta && <WaterGoalModal open goal={agua.meta} onSave={agua.alterarMeta} onCancel={() => {
         setMetaAberta(false)
-        if (notificar) notify("Alteração da meta cancelada.", "info")
       }} />}
     </section>
   )

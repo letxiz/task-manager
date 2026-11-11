@@ -6,7 +6,6 @@ import WorkspaceHeader from "../../components/layout/WorkspaceHeader"
 
 function AppLayout() {
   const menuRef = useRef(null)
-
   const closeMenu = () => menuRef.current?.close()
 
   useEffect(() => {
@@ -19,7 +18,7 @@ function AppLayout() {
   }, [])
 
   return (
-    <div className="min-h-dvh bg-orange-50/50 text-slate-900 md:flex">
+    <div className="min-h-dvh bg-[#f2ece4] text-stone-800 md:flex">
       <a
         href="#main-content"
         className="sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:not-sr-only focus:rounded-lg focus:bg-white focus:p-3"
@@ -46,7 +45,8 @@ function AppLayout() {
           <span className="font-semibold">Task Manager</span>
         </header>
 
-        <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 p-5 sm:p-8 lg:p-12">
+        {/* Centraliza o conteúdo e ajusta o espaçamento para cada tela. */}
+        <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-7xl flex-1 p-5 sm:px-10 sm:py-4 lg:px-12">
           <WorkspaceHeader />
           <Outlet />
         </main>

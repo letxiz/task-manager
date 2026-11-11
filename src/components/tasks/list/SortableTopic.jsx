@@ -1,14 +1,18 @@
+import { useState } from "react"
 import PropTypes from "prop-types"
-import { GripVertical, Trash2 } from "lucide-react"
+import { GripVertical, ChevronUp, FolderOpen } from "lucide-react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { getTopicColor } from "../../constants/topicColors"
-import Tooltip from "./Tooltip"
-import { useTooltip } from "./useTooltip"
+import { getTopicColor } from "../../../constants/topicColors"
+import ItemActions from "../controls/ItemActions"
+import Tooltip from "../controls/Tooltip"
+import { useTooltip } from "../../../hooks/tasks/useTooltip"
 
 function SortableTopic({ topic, children, onDeleteTopic, onEditTopic }) {
-  const color = getTopicColor(topic.cor)
+  // Controla a exibição das tarefas deste tópico.
+  const [recolhido, setRecolhido] = useState(false)
   const dragTooltip = useTooltip()
+  const color = getTopicColor(topic.cor)
   // Identifica o tópico no arraste.
   const {
     attributes,
@@ -32,17 +36,11 @@ function SortableTopic({ topic, children, onDeleteTopic, onEditTopic }) {
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       aria-labelledby={`topic-${topic.id}`}
-      className={`rounded-2xl border p-4 transition-colors ${color.surface} ${
+      className={`overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition-colors ${
         isOver ? "ring-2 ring-primary/30" : ""
       } ${isDragging ? "opacity-50" : ""}`}
     >
-      <div
-        // Ignora os botões do cabeçalho.
-        onClick={(event) => {
-          if (!isDragging && !event.target.closest("button")) onEditTopic(topic)
-        }}
-        className={`flex cursor-pointer items-center gap-2 border-b border-current/10 pb-2 ${color.text}`}
-      >
+      <div className={`flex items-center gap-2 border-b px-3 py-3 sm:px-4 ${color.surface} ${color.text}`}>
         <Tooltip
           id={dragTooltip.id}
           open={dragTooltip.open}
@@ -62,22 +60,15 @@ function SortableTopic({ topic, children, onDeleteTopic, onEditTopic }) {
             <GripVertical size={18} aria-hidden="true" />
           </button>
         </Tooltip>
-        <h2 id={`topic-${topic.id}`} className={`min-w-0 flex-1 break-words font-semibold ${color.text}`}>
-          <button type="button" onClick={() => onEditTopic(topic)} aria-label={`Ver detalhes do tópico ${topic.nome}`} className="min-h-11 w-full cursor-pointer rounded-lg px-2 py-2 text-left break-words transition-colors hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-primary">
-            {topic.nome}
-          </button>
+        <h2 id={`topic-${topic.id}`} className={`min-w-0 flex-1 break-words text-base font-semibold`}>
+          <ItemActions name={topic.nome} onEdit={() => onEditTopic(topic, true)} onDelete={() => onDeleteTopic(topic)}>
+            <FolderOpen size={18} className={`shrink-0 ${color.text}`} /><span className="min-w-0 break-words">{topic.nome}</span>
+          </ItemActions>
         </h2>
-        <button
-          type="button"
-          onClick={() => onDeleteTopic(topic)}
-          aria-label={`Excluir tópico ${topic.nome}`}
-          title="Excluir tópico"
-          className="shrink-0 rounded-lg p-2 text-muted hover:bg-white/70 hover:text-danger focus-visible:outline-2 focus-visible:outline-danger"
-        >
-          <Trash2 size={18} aria-hidden="true" />
-        </button>
+        <button type="button" onClick={() => setRecolhido((value) => !value)} aria-label={`${recolhido ? "Expandir" : "Recolher"} tópico ${topic.nome}`} aria-expanded={!recolhido} className="rounded-lg p-2 text-muted hover:bg-stone-200/60"><ChevronUp size={16} className={recolhido ? "rotate-180" : ""} /></button>
       </div>
-      {children}
+      {/* Exibe as tarefas apenas quando o grupo está expandido. */}
+      {!recolhido && children}
     </section>
   )
 }
@@ -88,6 +79,7 @@ SortableTopic.propTypes = {
   topic: PropTypes.shape({
     id: PropTypes.string.isRequired,
     nome: PropTypes.string.isRequired,
+    cor: PropTypes.string,
   }).isRequired,
   children: PropTypes.node.isRequired,
 }

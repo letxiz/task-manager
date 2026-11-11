@@ -1,2 +1,3 @@
+// Compartilha o layout responsivo entre a tarefa e a prévia de arraste.
 export const taskCardClassName =
-  "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 rounded-xl border border-slate-200 bg-white px-3 py-3"
+  "grid grid-cols-[auto_minmax(0,1fr)_auto] sm:grid-cols-[auto_minmax(0,1fr)_140px_auto_auto] items-center gap-4 bg-white px-6 py-7"

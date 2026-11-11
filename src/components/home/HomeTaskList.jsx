@@ -1,13 +1,16 @@
+import { useState } from "react"
 import PropTypes from "prop-types"
 import { Link } from "react-router-dom"
-import { ArrowUpRight, Check, ListChecks, Plus } from "lucide-react"
+import { ArrowUpRight, Check, ChevronLeft, ChevronRight, ListChecks, Plus } from "lucide-react"
 import { formatarDataExibicao } from "../../utils/dateUtils"
 import { diaLocal } from "../../utils/waterStorage"
-import { resumirTarefas } from "../../utils/homeTasks"
+import { paginarTarefas } from "../../utils/homeTasks"
 
 export default function HomeTaskList({ tarefas, topicos, onToggle, onDetails, onCreate }) {
-  // Mostra até cinco tarefas.
-  const { total, concluidas, porcentagem, visiveis } = resumirTarefas(tarefas)
+  const [pagina, setPagina] = useState(1)
+  const { total, visiveis, paginaAtual, totalPaginas } = paginarTarefas(tarefas, pagina)
+  // Ajusta a página quando a lista encolhe.
+  if (pagina !== paginaAtual) setPagina(paginaAtual)
   const hoje = diaLocal()
 
   return (
@@ -39,19 +42,18 @@ export default function HomeTaskList({ tarefas, topicos, onToggle, onDetails, on
                   <span className={`block break-words text-sm font-medium ${tarefa.concluida ? "text-muted line-through" : "text-slate-800"}`}>{tarefa.titulo}</span>
                   <span className="mt-1 block break-words text-xs text-muted">{topico?.nome || "Sem tópico"} · {prazo}{atrasada ? " · Prazo vencido" : ""}</span>
                 </button>
-                <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-medium ${tarefa.concluida ? "bg-green-50 text-success" : "bg-orange-100 text-primary"}`}>{tarefa.concluida ? "Concluída" : "Pendente"}</span>
+                <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-medium ${tarefa.concluida ? "bg-emerald-100 font-medium text-emerald-800 ring-1 ring-inset ring-emerald-300" : "bg-amber-100 font-medium text-amber-800 ring-1 ring-inset ring-amber-300"}`}>{tarefa.concluida ? "Concluída" : "Pendente"}</span>
               </li>
             )
           })}
         </ul>
       )}
-      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-orange-100 bg-orange-50/30 px-5 py-4 text-xs text-muted sm:px-6">
-        <span>{concluidas} de {total} tarefas concluídas{total > 5 ? " · Exibindo 5" : ""}</span>
-        <div className="flex items-center gap-2">
-          <progress max="100" value={porcentagem} aria-label="Tarefas concluídas" className="h-1.5 w-20 overflow-hidden rounded-full [&::-webkit-progress-bar]:bg-orange-100 [&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary" />
-          <span className="text-primary">{porcentagem}%</span>
-        </div>
-      </footer>
+      {totalPaginas > 1 && (
+        <nav aria-label="Paginação das tarefas do início" className="flex items-center justify-between gap-3 border-t border-stone-100 px-5 py-3 text-sm sm:px-6">
+          <button type="button" aria-label="Página anterior" disabled={paginaAtual === 1} onClick={() => setPagina(paginaAtual - 1)} className="inline-flex min-h-10 items-center gap-2 rounded-lg px-2 text-muted enabled:cursor-pointer enabled:hover:bg-stone-50 enabled:hover:text-primary focus-visible:outline-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-35"><ChevronLeft size={16} aria-hidden="true" />Anterior</button>
+          <button type="button" aria-label="Próxima página" disabled={paginaAtual === totalPaginas} onClick={() => setPagina(paginaAtual + 1)} className="inline-flex min-h-10 items-center gap-2 rounded-lg px-2 text-muted enabled:cursor-pointer enabled:hover:bg-stone-50 enabled:hover:text-primary focus-visible:outline-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-35">Próxima<ChevronRight size={16} aria-hidden="true" /></button>
+        </nav>
+      )}
     </section>
   )
 }

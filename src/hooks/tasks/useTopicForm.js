@@ -3,8 +3,9 @@ import { TOPIC_COLORS, getTopicColor } from "../../constants/topicColors"
 import { useNotification } from "../../contexts/NotificationContext"
 import { gerarIdSeguro } from "../../utils/generateId"
 
-export function useTopicForm({ topicos, setTopicos }) {
+export function useTopicForm({ topicos, setTopicos, setTarefas }) {
   const notify = useNotification()
+  const [editandoSemTopico, setEditandoSemTopico] = useState(false)
   const [topicoEditando, setTopicoEditando] = useState(null)
   const [modalTopicoAberto, setModalTopicoAberto] = useState(false)
   const [corTopico, setCorTopico] = useState(TOPIC_COLORS[0].id)
@@ -12,6 +13,7 @@ export function useTopicForm({ topicos, setTopicos }) {
   const [erroTopico, setErroTopico] = useState("")
   const [erroCriacaoTopico, setErroCriacaoTopico] = useState("")
   function editarTopico(topico) {
+    setEditandoSemTopico(false)
     setTopicoEditando(topico.id)
     setNomeTopico(topico.nome)
     setCorTopico(getTopicColor(topico.cor).id)
@@ -21,8 +23,8 @@ export function useTopicForm({ topicos, setTopicos }) {
   }
   function cancelarTopico() {
     setModalTopicoAberto(false)
-    notify(topicoEditando ? "Edição do tópico cancelada. Nenhuma alteração foi aplicada." : "Criação do tópico cancelada.", "info")
     setTopicoEditando(null)
+    setEditandoSemTopico(false)
   }
   function criarTopico(event) {
     event.preventDefault()
@@ -61,7 +63,16 @@ export function useTopicForm({ topicos, setTopicos }) {
       return
     }
 
-    setTopicos((atuais) => [...atuais, { id, nome, cor: getTopicColor(corTopico).id }], "Tópico criado com sucesso.")
+    const salvo = setTopicos((atuais) => [...atuais, { id, nome, cor: getTopicColor(corTopico).id }], editandoSemTopico ? undefined : "Tópico criado com sucesso.")
+    if (!salvo) return
+    if (editandoSemTopico) {
+      const tarefasSalvas = setTarefas((atuais) => atuais.map((tarefa) =>
+        !tarefa.topicoId || !topicos.some((topico) => topico.id === tarefa.topicoId)
+          ? { ...tarefa, topicoId: id }
+          : tarefa))
+      if (tarefasSalvas) notify("Tópico atualizado. Suas tarefas foram mantidas no grupo.")
+    }
+    setEditandoSemTopico(false)
     setNomeTopico("")
     setErroTopico("")
     setErroCriacaoTopico("")
@@ -69,6 +80,7 @@ export function useTopicForm({ topicos, setTopicos }) {
   }
 
   function abrir() {
+    setEditandoSemTopico(false)
     setTopicoEditando(null)
     setNomeTopico("")
     setCorTopico(TOPIC_COLORS[0].id)
@@ -79,8 +91,13 @@ export function useTopicForm({ topicos, setTopicos }) {
 
   return {
     abrir, editar: editarTopico,
+    editarSemTopico: () => {
+      abrir()
+      setNomeTopico("Sem tópico")
+      setEditandoSemTopico(true)
+    },
     props: {
-      editing: Boolean(topicoEditando), open: modalTopicoAberto,
+      editing: Boolean(topicoEditando) || editandoSemTopico, open: modalTopicoAberto,
       name: nomeTopico, color: corTopico, onColorChange: setCorTopico,
       error: erroTopico, creationError: erroCriacaoTopico,
       onNameChange: (nome) => {
