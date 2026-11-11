@@ -1,24 +1,18 @@
-import { useEffect, useRef, useState } from "react"
+import { useDialog } from "../../hooks/useDialog"
+import { useState } from "react"
 import PropTypes from "prop-types"
 import { X } from "lucide-react"
 
 export default function WaterGoalModal({ open, goal, onCancel, onSave }) {
-  const dialogRef = useRef(null)
+  const { dialogRef, handleCancel } = useDialog(open, onCancel)
   // Só aplica a meta ao salvar.
   const [valor, setValor] = useState(String(goal))
-  useEffect(() => {
-    if (open) dialogRef.current.showModal()
-    else dialogRef.current.close()
-  }, [open])
 
   return (
     <dialog
       ref={dialogRef}
       aria-labelledby="water-goal-title"
-      onCancel={(event) => {
-        event.preventDefault()
-        onCancel()
-      }}
+      onCancel={handleCancel}
       className="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-sm rounded-2xl border-0 bg-white p-6 text-slate-800 shadow-xl backdrop:bg-slate-950/50"
     >
       <div className="flex items-center justify-between gap-3">
