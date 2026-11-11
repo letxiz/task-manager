@@ -1,7 +1,7 @@
 import { useState } from "react"
 import PropTypes from "prop-types"
 import { Link } from "react-router-dom"
-import { ArrowUpRight, Check, ChevronLeft, ChevronRight, ListChecks, Plus } from "lucide-react"
+import { ArrowUpRight, Check, ChevronLeft, ChevronRight, CircleCheck, Clock, ListChecks, Plus } from "lucide-react"
 import { formatarDataExibicao } from "../../utils/dateUtils"
 import { diaLocal } from "../../utils/waterStorage"
 import { paginarTarefas } from "../../utils/homeTasks"
@@ -16,8 +16,8 @@ export default function HomeTaskList({ tarefas, topicos, onToggle, onDetails, on
   return (
     <section aria-labelledby="home-tasks-title" className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-orange-200 bg-white transition duration-200 hover:-translate-y-1 hover:border-primary/30 hover:shadow-md focus-within:border-primary/30 focus-within:shadow-md motion-reduce:transform-none motion-reduce:transition-none">
       <header className="flex items-center justify-between gap-3 border-b border-orange-100 p-5 sm:px-6">
-        <div><h2 id="home-tasks-title" className="text-lg font-semibold">Suas tarefas</h2><p className="mt-1 text-xs leading-5 text-muted">Um pouco de foco, um passo de cada vez.</p></div>
-        <Link to="/tasks" className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-lg px-2 text-xs font-medium text-primary hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-primary">Ver todas<ArrowUpRight size={14} aria-hidden="true" /></Link>
+        <div><h2 id="home-tasks-title" className="text-lg font-semibold">Suas tarefas</h2><p className="mt-1 text-sm leading-5 text-muted">Um pouco de foco, um passo de cada vez.</p></div>
+        <Link to="/tasks" className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-lg px-2 text-sm font-medium text-primary hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-primary">Ver todas<ArrowUpRight size={14} aria-hidden="true" /></Link>
       </header>
       {total === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
@@ -39,10 +39,10 @@ export default function HomeTaskList({ tarefas, topicos, onToggle, onDetails, on
                   <span aria-hidden="true" className={`flex size-4 items-center justify-center rounded border peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary ${tarefa.concluida ? "border-success bg-success text-white" : "border-orange-300 bg-white"}`}>{tarefa.concluida && <Check size={12} strokeWidth={3} />}</span>
                 </label>
                 <button type="button" onClick={() => onDetails(tarefa)} className="min-w-0 flex-1 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-primary" aria-label={`Ver detalhes da tarefa ${tarefa.titulo}`}>
-                  <span className={`block break-words text-sm font-medium ${tarefa.concluida ? "text-muted line-through" : "text-slate-800"}`}>{tarefa.titulo}</span>
-                  <span className="mt-1 block break-words text-xs text-muted">{topico?.nome || "Sem tópico"} · {prazo}{atrasada ? " · Prazo vencido" : ""}</span>
+                  <span className={`block break-words text-base font-medium ${tarefa.concluida ? "text-muted line-through" : "text-slate-800"}`}>{tarefa.titulo}</span>
+                  <span className="mt-1 block break-words text-sm text-muted">{topico?.nome || "Sem tópico"} · {prazo}{atrasada ? " · Prazo vencido" : ""}</span>
                 </button>
-                <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-medium ${tarefa.concluida ? "bg-emerald-100 font-medium text-emerald-800 ring-1 ring-inset ring-emerald-300" : "bg-amber-100 font-medium text-amber-800 ring-1 ring-inset ring-amber-300"}`}>{tarefa.concluida ? "Concluída" : "Pendente"}</span>
+                <span className={`inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium ${tarefa.concluida ? "bg-emerald-100 font-medium text-emerald-800 ring-1 ring-inset ring-emerald-300" : "bg-amber-100 font-medium text-amber-800 ring-1 ring-inset ring-amber-300"}`}>{tarefa.concluida ? <CircleCheck size={14} className="shrink-0" aria-hidden="true" /> : <Clock size={14} className="shrink-0" aria-hidden="true" />}{tarefa.concluida ? "Concluída" : "Pendente"}</span>
               </li>
             )
           })}
