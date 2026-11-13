@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { detectarColisao } from "../../utils/taskCollision"
+import { indexarTarefas } from "../../utils/taskGroups.js"
 
 export function useTaskDrag({ tarefas, topicos, onMoveTask, onReorderTasks, onReorderTopicos }) {
   const [previaArraste, setPreviaArraste] = useState(null)
@@ -15,11 +16,8 @@ export function useTaskDrag({ tarefas, topicos, onMoveTask, onReorderTasks, onRe
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
-  // Tópico ausente vira Sem tópico.
-  const tarefasSemTopico = tarefas.filter(
-    (tarefa) =>
-      !tarefa.topicoId || !topicos.some((topico) => topico.id === tarefa.topicoId)
-  )
+  const indiceTarefas = useMemo(() => indexarTarefas(tarefas, topicos), [tarefas, topicos])
+  const { tarefasSemTopico, porTopico, tarefasPorId, indicesTopicos } = indiceTarefas
 
   function handleDragEnd({ active, over }) {
     setPreviaArraste(null)
@@ -34,11 +32,9 @@ export function useTaskDrag({ tarefas, topicos, onMoveTask, onReorderTasks, onRe
         alvo?.kind === "topic" || alvo?.kind === "task" ? alvo.topicId : null
       if (!topicoAlvoId || topicoAlvoId === itemArrastado.topicId) return
 
-      const indiceAtual = topicos.findIndex(
-        (topico) => topico.id === itemArrastado.topicId
-      )
-      const indiceAlvo = topicos.findIndex((topico) => topico.id === topicoAlvoId)
-      if (indiceAtual !== -1 && indiceAlvo !== -1) {
+      const indiceAtual = indicesTopicos.get(itemArrastado.topicId)
+      const indiceAlvo = indicesTopicos.get(topicoAlvoId)
+      if (indiceAtual !== undefined && indiceAlvo !== undefined) {
         onReorderTopicos(arrayMove(topicos, indiceAtual, indiceAlvo))
       }
       return
@@ -51,7 +47,7 @@ export function useTaskDrag({ tarefas, topicos, onMoveTask, onReorderTasks, onRe
       const tarefasDoGrupo =
         itemArrastado.topicId === ""
           ? tarefasSemTopico
-          : tarefas.filter((tarefa) => tarefa.topicoId === itemArrastado.topicId)
+          : porTopico.get(itemArrastado.topicId) ?? []
       const indiceAtual = tarefasDoGrupo.findIndex(
         (tarefa) => tarefa.id === itemArrastado.taskId
       )
@@ -94,7 +90,7 @@ export function useTaskDrag({ tarefas, topicos, onMoveTask, onReorderTasks, onRe
       return
     }
 
-    const tarefa = tarefas.find((item) => item.id === tarefaAtiva.taskId)
+    const tarefa = tarefasPorId.get(tarefaAtiva.taskId)
     setPreviaArraste(
       tarefa
         ? {
@@ -107,6 +103,7 @@ export function useTaskDrag({ tarefas, topicos, onMoveTask, onReorderTasks, onRe
   }
 
   return {
+    indiceTarefas,
     tarefasSemTopico,
     previaArraste,
     dragProps: {

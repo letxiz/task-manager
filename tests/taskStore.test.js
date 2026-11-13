@@ -480,3 +480,33 @@ test("falha ao gravar preserva o comportamento existente dos modais de criação
   assert.ok(app.store.erroArmazenamento)
   assert.deepEqual(app.mensagens, [])
 })
+
+for (const legado of [false, true]) {
+  test(`recuperação parcial no store mantém IDs únicos e bloqueia sobrescrita (legado: ${legado})`, (t) => {
+    const tarefas = [
+      { id: "1", titulo: "Preservada", concluida: false, topicoId: "a" },
+      { id: "1", titulo: "Duplicada", concluida: true },
+      { id: "2", titulo: "Recuperada", concluida: false, descricao: {}, data: "inválida", topicoId: 4 },
+      { id: "", titulo: "Sem ID", concluida: false },
+    ]
+    const topicos = [{ id: "a", nome: "A" }, { id: "a", nome: "Duplicado" }, { id: " ", nome: "Inválido" }]
+    const originais = legado
+      ? { "minhas-tarefas": JSON.stringify(tarefas), "meus-topicos": JSON.stringify(topicos) }
+      : { "task-manager:dados": JSON.stringify({ versao: 1, tarefas, topicos }) }
+    const app = montar(t, originais)
+    assert.deepEqual(app.store.tarefas.map((item) => item.id), ["1", "2"])
+    assert.deepEqual(app.store.topicos.map((item) => item.id), ["a"])
+    assert.equal(app.store.tarefas[1].descricao, "")
+    assert.equal(app.store.tarefas[1].data, "")
+    assert.equal(app.store.tarefas[1].topicoId, "")
+    assert.match(app.store.erroArmazenamento, /tarefas e tópicos/)
+    act(() => {
+      assert.equal(app.store.criarTarefa({ titulo: "Em memória" }).salvo, false)
+      assert.equal(app.store.excluirTopico("a"), false)
+    })
+    for (const [chave, valor] of Object.entries(originais)) assert.equal(app.storage.getItem(chave), valor)
+    assert.equal(app.storage.length, Object.keys(originais).length)
+    assert.ok(app.store.erroArmazenamento)
+    assert.deepEqual(app.mensagens, [])
+  })
+}

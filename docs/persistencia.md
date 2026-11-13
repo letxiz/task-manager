@@ -35,3 +35,29 @@ O aplicativo não executa restauração, limpeza ou correção automática desse
 
 A persistência continua local ao navegador. Sincronização e resolução de conflitos
 entre abas não fazem parte desta alteração.
+
+## Validação e recuperação parcial (Etapa 7)
+
+O schema continua na versão 1; não houve mudança de formato. Documentos de versão
+futura ou sem versão reconhecida não são interpretados nem substituídos.
+
+Cada coleção é validada de forma independente. Registros inválidos não impedem a
+leitura dos demais. A primeira ocorrência válida de cada ID é mantida, na ordem
+original; as demais continuam preservadas no conteúdo bruto do armazenamento.
+IDs precisam ser strings não vazias, sem espaços nem caracteres de controle.
+Formatos antigos não UUID e Unicode continuam aceitos. Os IDs não são aparados,
+renomeados ou gerados durante o carregamento, para não alterar os vínculos.
+
+Tarefas precisam de ID, título não vazio e conclusão booleana; tópicos precisam de
+ID e nome não vazio. Registros com campos obrigatórios inválidos não entram na
+visualização. Campos opcionais ausentes continuam aceitos. Descrição, prazo e vínculo
+com tipo/conteúdo inválido recebem string vazia apenas em memória; cores com tipo
+inválido usam o padrão visual. Campos extras são preservados. Vínculos válidos com
+tópicos ausentes permanecem intactos, e a tarefa aparece em Sem tópico.
+
+Qualquer omissão, duplicidade ou ajuste gera aviso identificando a coleção afetada
+e bloqueia as gravações durante a sessão. Isso impede que uma recuperação parcial
+apague registros não exibidos. O aplicativo não escolhe entre cópias duplicadas para
+uma recuperação definitiva: o usuário pode comparar os registros brutos exportados
+antes de decidir como corrigir os dados. Um JSON sintaticamente corrompido não é
+parcialmente interpretado; seu conteúdo original permanece disponível para análise.

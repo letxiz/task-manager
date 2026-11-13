@@ -1,16 +1,18 @@
+import { useMemo } from "react"
+import { diaLocal } from "../../utils/waterStorage"
 import HomeHeader from "../../components/home/HomeHeader"
 import HomeSummary from "../../components/home/HomeSummary"
 import HomeTaskList from "../../components/home/HomeTaskList"
 import WaterPanel from "../../components/home/WaterPanel"
 import DetailsModal from "../../components/tasks/modals/DetailsModal"
-import TaskFormModal from "../../components/tasks/modals/TaskFormModal"
+import TaskForm from "../../components/tasks/modals/TaskForm"
 import { useHomeTasks } from "../../hooks/home/useHomeTasks"
 import { useWaterTracker } from "../../hooks/home/useWaterTracker"
 
 function Home() {
-  const { dados, formulario, detalhes, verDetalhes } = useHomeTasks()
+  const { dados, formulario, formularioRef, detalhes, verDetalhes } = useHomeTasks()
   const agua = useWaterTracker()
-  const concluidas = dados.tarefas.filter((tarefa) => tarefa.concluida).length
+  const concluidas = useMemo(() => dados.tarefas.filter((tarefa) => tarefa.concluida).length, [dados.tarefas])
 
   return (
     <div className="space-y-7">
@@ -30,6 +32,7 @@ function Home() {
       />
       <div className="grid items-stretch gap-5 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
         <HomeTaskList
+          hoje={diaLocal()}
           tarefas={dados.tarefas}
           topicos={dados.topicos}
           onToggle={dados.alternarConclusao}
@@ -39,7 +42,7 @@ function Home() {
         <WaterPanel agua={agua} />
       </div>
       <DetailsModal {...detalhes} />
-      <TaskFormModal {...formulario.props} />
+      <TaskForm ref={formularioRef} dados={dados} />
     </div>
   )
 }

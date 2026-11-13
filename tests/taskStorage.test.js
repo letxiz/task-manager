@@ -76,3 +76,68 @@ test("falha de serialização não substitui dados persistidos", () => {
   assert.ok(salvarDocumentoTarefas({ tarefas: circular, topicos: [] }, storage).erro)
   assert.deepEqual(carregarDocumentoTarefas(storage), { ...dados, erro: "" })
 })
+
+for (const legado of [false, true]) {
+  test(`recupera registros válidos com IDs inválidos ou duplicados (legado: ${legado})`, () => {
+    const tarefas = [tarefa, { ...tarefa, titulo: "Duplicada" }, ...["", " ", "a b", "a\nb", 3, null].map((id) => ({ ...tarefa, id })), { ...tarefa, id: "2", titulo: "Segunda" }]
+    const topicos = [topico, { ...topico, nome: "Duplicado" }, ...["", " ", "a b", "a\nb", 3, null].map((id) => ({ ...topico, id })), { ...topico, id: "b", nome: "B" }]
+    const original = legado
+      ? { "minhas-tarefas": JSON.stringify(tarefas), "meus-topicos": JSON.stringify(topicos) }
+      : { [TASK_DOCUMENT_KEY]: JSON.stringify({ versao: 1, tarefas, topicos }) }
+    const storage = armazenamento(original)
+    const atual = carregarDocumentoTarefas(storage)
+    assert.deepEqual(atual.tarefas.map((item) => item.id), ["1", "2"])
+    assert.deepEqual(atual.topicos.map((item) => item.id), ["a", "b"])
+    assert.equal(atual.tarefas[0].titulo, tarefa.titulo)
+    assert.equal(atual.topicos[0].nome, topico.nome)
+    assert.ok(atual.erro)
+    assert.deepEqual(Object.fromEntries(storage.valores), original)
+  })
+}
+
+test("documento incompleto preserva a coleção que ainda pode ser lida", () => {
+  for (const documento of [{ versao: 1, tarefas: [tarefa] }, { versao: 1, tarefas: [tarefa], topicos: null }]) {
+    const original = JSON.stringify(documento)
+    const storage = armazenamento({ [TASK_DOCUMENT_KEY]: original })
+    const atual = carregarDocumentoTarefas(storage)
+    assert.deepEqual(atual.tarefas, [tarefa])
+    assert.deepEqual(atual.topicos, [])
+    assert.ok(atual.erro)
+    assert.equal(storage.getItem(TASK_DOCUMENT_KEY), original)
+  }
+})
+
+test("campos opcionais inválidos são recuperados em memória sem regravar o original", () => {
+  const documento = { versao: 1, tarefas: [{ ...tarefa, descricao: {}, data: "2026-02-30", topicoId: 4, cor: [] }], topicos: [{ ...topico, cor: {} }] }
+  const original = JSON.stringify(documento)
+  const storage = armazenamento({ [TASK_DOCUMENT_KEY]: original })
+  const atual = carregarDocumentoTarefas(storage)
+  assert.equal(atual.tarefas.length, 1)
+  assert.equal(atual.tarefas[0].descricao, "")
+  assert.equal(atual.tarefas[0].data, "")
+  assert.equal(atual.tarefas[0].topicoId, "")
+  assert.equal(atual.tarefas[0].cor, undefined)
+  assert.equal(atual.topicos[0].cor, undefined)
+  assert.ok(atual.erro)
+  assert.equal(storage.getItem(TASK_DOCUMENT_KEY), original)
+})
+
+test("falha ao ler uma chave legada preserva a outra coleção", () => {
+  const storage = { getItem(chave) {
+    if (chave === "minhas-tarefas") throw new Error("Falha de leitura")
+    return chave === "meus-topicos" ? JSON.stringify([topico]) : null
+  } }
+  const atual = carregarDocumentoTarefas(storage)
+  assert.deepEqual(atual.tarefas, [])
+  assert.deepEqual(atual.topicos, [topico])
+  assert.match(atual.erro, /dados inválidos em tarefas/)
+})
+
+test("dados antigos válidos mantêm campos desconhecidos e vínculos órfãos recuperáveis", () => {
+  const antigas = [{ id: "antiga", titulo: "Antiga", concluida: true, topicoId: "removido", extra: { futuro: "preservado" } }]
+  const storage = armazenamento({ "minhas-tarefas": JSON.stringify(antigas) })
+  const atual = carregarDocumentoTarefas(storage)
+  assert.deepEqual(atual, { tarefas: antigas, topicos: [], erro: "" })
+  assert.deepEqual(salvarDocumentoTarefas(atual, storage), { erro: "" })
+  assert.deepEqual(carregarDocumentoTarefas(storage), atual)
+})

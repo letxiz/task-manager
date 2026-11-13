@@ -21,6 +21,11 @@ export function resumirTarefas(tarefas, limite = 5) {
 export function paginarTarefas(tarefas, pagina = 1, porPagina = 6) {
   // Ordena a lista inteira antes do recorte para manter a prioridade entre páginas.
   const resumo = resumirTarefas(tarefas, tarefas.length)
+  return paginarResumoTarefas(resumo, pagina, porPagina)
+}
+
+// Recebe a ordenação pronta: trocar de página exige apenas recortar a lista.
+export function paginarResumoTarefas(resumo, pagina = 1, porPagina = 6) {
   // Mantém a página 1 na lista vazia e evita páginas inválidas após exclusões.
   const totalPaginas = Math.max(1, Math.ceil(resumo.total / porPagina))
   const paginaAtual = Math.min(Math.max(1, pagina), totalPaginas)

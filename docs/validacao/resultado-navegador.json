@@ -1,0 +1,181 @@
+{
+  "results": [
+    {
+      "name": "desktop-crud-persistence",
+      "status": "pass"
+    },
+    {
+      "name": "desktop-pagination-ordering",
+      "status": "pass"
+    },
+    {
+      "name": "desktop-mouse-dnd",
+      "status": "pass"
+    },
+    {
+      "name": "desktop-keyboard-dnd",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-touch-dnd",
+      "status": "pass"
+    },
+    {
+      "name": "responsive-focus-accessibility",
+      "status": "pass"
+    },
+    {
+      "name": "storage-recovery",
+      "status": "pass"
+    }
+  ],
+  "accessibility": [
+    {
+      "name": "tasks-desktop",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "nodes": [
+            {
+              "target": [
+                ".w-64 > .pb-2.uppercase.px-6"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #686057, background color: #e4d9cc, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                "#sidebar-navigation > .hover\\:bg-stone-200\\/70.hover\\:text-stone-800[href=\"/\"] > .whitespace-nowrap"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #686057, background color: #e4d9cc, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                "#sidebar-navigation > .bg-\\[\\#edc7b9\\].hover\\:bg-\\[\\#e6b6a4\\][href$=\"tasks\"] > .whitespace-nowrap"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.71 (foreground color: #ad4332, background color: #edc7b9, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                ".w-64 > .px-5.mt-auto.pb-5 > .mb-12.leading-6.text-muted > p"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.44 (foreground color: #686057, background color: #e4d9cc, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ]
+        },
+        {
+          "id": "list",
+          "impact": "serious",
+          "nodes": [
+            {
+              "target": [
+                "section[aria-labelledby=\"topic-a\"] > ul"
+              ],
+              "failureSummary": "Fix all of the following:\n  List element has direct children that are not allowed: [role=button]"
+            },
+            {
+              "target": [
+                "section[aria-labelledby=\"topic-b\"] > ul"
+              ],
+              "failureSummary": "Fix all of the following:\n  List element has direct children that are not allowed: [role=button]"
+            },
+            {
+              "target": [
+                "section[aria-labelledby=\"topic-c\"] > ul"
+              ],
+              "failureSummary": "Fix all of the following:\n  List element has direct children that are not allowed: [role=button]"
+            },
+            {
+              "target": [
+                ".border-2 > ul"
+              ],
+              "failureSummary": "Fix all of the following:\n  List element has direct children that are not allowed: [role=button]"
+            }
+          ]
+        },
+        {
+          "id": "nested-interactive",
+          "impact": "serious",
+          "nodes": [
+            {
+              "target": [
+                "section[aria-labelledby=\"topic-a\"] > ul > .grid-cols-\\[auto_minmax\\(0\\,1fr\\)_auto\\].sm\\:grid-cols-\\[20px_minmax\\(0\\,1fr\\)_140px_128px_34px\\].items-start"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has focusable descendants. Move them outside of the element, or remove them."
+            },
+            {
+              "target": [
+                "section[aria-labelledby=\"topic-b\"] > ul > .grid-cols-\\[auto_minmax\\(0\\,1fr\\)_auto\\].sm\\:grid-cols-\\[20px_minmax\\(0\\,1fr\\)_140px_128px_34px\\].items-start"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has focusable descendants. Move them outside of the element, or remove them."
+            },
+            {
+              "target": [
+                "section[aria-labelledby=\"topic-c\"] > ul > .grid-cols-\\[auto_minmax\\(0\\,1fr\\)_auto\\].sm\\:grid-cols-\\[20px_minmax\\(0\\,1fr\\)_140px_128px_34px\\].items-start"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has focusable descendants. Move them outside of the element, or remove them."
+            },
+            {
+              "target": [
+                ".border-2 > ul > .grid-cols-\\[auto_minmax\\(0\\,1fr\\)_auto\\].sm\\:grid-cols-\\[20px_minmax\\(0\\,1fr\\)_140px_128px_34px\\].items-start"
+              ],
+              "failureSummary": "Fix any of the following:\n  Element has focusable descendants. Move them outside of the element, or remove them."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "task-form-mobile",
+      "violations": []
+    },
+    {
+      "name": "home-mobile",
+      "violations": [
+        {
+          "id": "label-content-name-mismatch",
+          "impact": "serious",
+          "nodes": [
+            {
+              "target": [
+                ".py-4.hover\\:bg-orange-50\\/50.sm\\:px-6:nth-child(1) > .text-left.min-w-0.flex-1"
+              ],
+              "failureSummary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+            },
+            {
+              "target": [
+                ".py-4.hover\\:bg-orange-50\\/50.sm\\:px-6:nth-child(2) > .text-left.min-w-0.flex-1"
+              ],
+              "failureSummary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+            },
+            {
+              "target": [
+                ".py-4.hover\\:bg-orange-50\\/50.sm\\:px-6:nth-child(3) > .text-left.min-w-0.flex-1"
+              ],
+              "failureSummary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+            },
+            {
+              "target": [
+                ".py-4.hover\\:bg-orange-50\\/50.sm\\:px-6:nth-child(4) > .text-left.min-w-0.flex-1"
+              ],
+              "failureSummary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+            },
+            {
+              "target": [
+                "button[aria-label=\"Registrar 1000 ml de água\"]"
+              ],
+              "failureSummary": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "ambiente": {
+    "navegador": "Chromium headless 158.0.8127.18",
+    "playwright": "1.65.0",
+    "axe_core": "4.14.0",
+    "origem": "build de produção, preview local em 127.0.0.1:4173",
+    "dados": "dados sintéticos em perfis temporários; sem acesso ao perfil do usuário"
+  }
+}

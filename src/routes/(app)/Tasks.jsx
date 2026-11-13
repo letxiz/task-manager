@@ -1,27 +1,28 @@
-import { useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { Search, X, GripVertical } from "lucide-react"
 import TaskList from "../../components/tasks/list/TaskList"
 import TaskModals from "../../components/tasks/modals/TaskModals"
 import TaskToolbar from "../../components/tasks/TaskToolbar"
 import { useTaskData } from "../../hooks/tasks/useTaskData"
 import { useTaskDialogs } from "../../hooks/tasks/useTaskDialogs"
-import { useTaskForm } from "../../hooks/tasks/useTaskForm"
-import { useTopicForm } from "../../hooks/tasks/useTopicForm"
+import { useFormControls } from "../../hooks/tasks/useFormControls"
 
 function Tasks() {
   // Guarda o status selecionado e o texto da busca.
   const [filtro, setFiltro] = useState("todas")
   const [busca, setBusca] = useState("")
   const dados = useTaskData()
-  const formularioTarefa = useTaskForm(dados)
-  const formularioTopico = useTopicForm(dados)
+  const tarefaRef = useRef(null)
+  const topicoRef = useRef(null)
+  const formularioTarefa = useFormControls(tarefaRef)
+  const formularioTopico = useFormControls(topicoRef)
   const dialogos = useTaskDialogs(dados, formularioTarefa, formularioTopico)
   const { tarefas, topicos, erroArmazenamento } = dados
 
-  const concluidas = tarefas.filter((tarefa) => tarefa.concluida).length
+  const concluidas = useMemo(() => tarefas.filter((tarefa) => tarefa.concluida).length, [tarefas])
   const buscaNormalizada = busca.trim().toLocaleLowerCase("pt-BR")
   const filtrando = Boolean(buscaNormalizada) || filtro !== "todas"
-  const visiveis = tarefas.filter((tarefa) => {
+  const visiveis = useMemo(() => tarefas.filter((tarefa) => {
     const correspondeAoStatus =
       filtro === "todas" ||
       (filtro === "concluidas" ? tarefa.concluida : !tarefa.concluida)
@@ -30,7 +31,7 @@ function Tasks() {
     const correspondeABusca = textoPesquisavel.includes(buscaNormalizada)
 
     return correspondeAoStatus && correspondeABusca
-  })
+  }), [tarefas, filtro, buscaNormalizada])
 
   return (
     <div className="flex min-h-[calc(100dvh-190px)] flex-col">
@@ -146,9 +147,10 @@ function Tasks() {
         </span>
       </footer>
       <TaskModals
+        dados={dados}
         dialogos={dialogos}
-        formularioTarefa={formularioTarefa}
-        formularioTopico={formularioTopico}
+        tarefaRef={tarefaRef}
+        topicoRef={topicoRef}
       />
     </div>
   )
