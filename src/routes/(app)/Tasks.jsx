@@ -123,7 +123,7 @@ function Tasks() {
         onEditUnassigned={formularioTopico.editarSemTopico}
         onMoveTask={dados.moverTarefa}
         onReorderTasks={dados.reordenarTarefas}
-        onReorderTopicos={dados.setTopicos}
+        onReorderTopicos={dados.reordenarTopicos}
         onDeleteTopic={dialogos.solicitarExclusaoTopico}
       />
       {topicos.length > 0 && (
