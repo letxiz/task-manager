@@ -1,10 +1,7 @@
 import { useState } from "react"
-import { TOPIC_COLORS, getTopicColor } from "../../constants/topicColors"
-import { useNotification } from "../../contexts/NotificationContext"
-import { gerarIdSeguro } from "../../utils/generateId"
+import { TOPIC_COLORS, getTopicColor } from "../../constants/topicColors.js"
 
-export function useTopicForm({ topicos, setTopicos, setTarefas }) {
-  const notify = useNotification()
+export function useTopicForm({ criarTopico: cadastrarTopico, editarTopico: atualizarTopico, criarTopicoComTarefasSemTopico }) {
   const [editandoSemTopico, setEditandoSemTopico] = useState(false)
   const [topicoEditando, setTopicoEditando] = useState(null)
   const [modalTopicoAberto, setModalTopicoAberto] = useState(false)
@@ -28,50 +25,21 @@ export function useTopicForm({ topicos, setTopicos, setTarefas }) {
   }
   function criarTopico(event) {
     event.preventDefault()
-    const nome = nomeTopico.trim()
-
-    if (!nome) {
-      setErroTopico("O nome do tópico é obrigatório.")
+    const campos = { nome: nomeTopico, cor: corTopico }
+    const resultado = topicoEditando
+      ? atualizarTopico(topicoEditando, campos)
+      : editandoSemTopico ? criarTopicoComTarefasSemTopico(campos) : cadastrarTopico(campos)
+    if (resultado.erro) {
+      if (resultado.campo === "nome") setErroTopico(resultado.erro)
+      else setErroCriacaoTopico(resultado.erro)
       return
     }
-
-    // Evita nomes duplicados.
-    const nomeJaExiste = topicos.some(
-      (topico) => topico.id !== topicoEditando && topico.nome.toLocaleLowerCase() === nome.toLocaleLowerCase()
-    )
-    if (nomeJaExiste) {
-      setErroTopico("Já existe um tópico com esse nome.")
-      return
-    }
-
     if (topicoEditando) {
-      setTopicos((atuais) => atuais.map((topico) => topico.id === topicoEditando
-        ? { ...topico, nome, cor: getTopicColor(corTopico).id }
-        : topico), "Tópico atualizado com sucesso.")
       setTopicoEditando(null)
       setModalTopicoAberto(false)
       return
     }
-
-    let id
-    try {
-      id = gerarIdSeguro()
-    } catch {
-      setErroCriacaoTopico(
-        "Este navegador não conseguiu gerar um identificador seguro. Tente novamente em um navegador atualizado."
-      )
-      return
-    }
-
-    const salvo = setTopicos((atuais) => [...atuais, { id, nome, cor: getTopicColor(corTopico).id }], editandoSemTopico ? undefined : "Tópico criado com sucesso.")
-    if (!salvo) return
-    if (editandoSemTopico) {
-      const tarefasSalvas = setTarefas((atuais) => atuais.map((tarefa) =>
-        !tarefa.topicoId || !topicos.some((topico) => topico.id === tarefa.topicoId)
-          ? { ...tarefa, topicoId: id }
-          : tarefa))
-      if (tarefasSalvas) notify("Tópico atualizado. Suas tarefas foram mantidas no grupo.")
-    }
+    if (!resultado.salvo) return
     setEditandoSemTopico(false)
     setNomeTopico("")
     setErroTopico("")

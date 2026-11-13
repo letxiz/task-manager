@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react"
 import { useNotification } from "../../contexts/NotificationContext"
-import { carregarAgua, diaLocal, registroDoDia, WATER_STORAGE_KEY } from "../../utils/waterStorage"
+import {
+  carregarAgua,
+  diaLocal,
+  registroDoDia,
+  WATER_STORAGE_KEY,
+} from "../../utils/waterStorage"
 
 export function useWaterTracker() {
   const notify = useNotification()
@@ -8,14 +13,18 @@ export function useWaterTracker() {
     try {
       return carregarAgua(localStorage)
     } catch {
-      return carregarAgua({ getItem: () => { throw new Error("Armazenamento indisponível") } })
+      return carregarAgua({
+        getItem: () => {
+          throw new Error("Armazenamento indisponível")
+        },
+      })
     }
   })
   const [registro, setRegistro] = useState(inicial.registro)
   const [erro, setErro] = useState(inicial.erro)
   const [hoje, setHoje] = useState(diaLocal)
 
-  // Atualiza o dia sem recarregar.
+  // A aba pode ficar aberta durante a noite; o foco também atualiza abas suspensas.
   useEffect(() => {
     const atualizarDia = () => setHoje(diaLocal())
     const timer = setInterval(atualizarDia, 30000)
@@ -27,11 +36,15 @@ export function useWaterTracker() {
   }, [])
 
   const atual = registroDoDia(registro, hoje)
-  const total = atual.quantidades.reduce((soma, quantidade) => soma + quantidade, 0)
-  // Limita o círculo a 100%.
+  const total = atual.quantidades.reduce(
+    (soma, quantidade) => soma + quantidade,
+    0
+  )
+  // O consumo pode superar a meta, mas o indicador visual termina em 100%.
   const porcentagem = Math.min(100, Math.round((total / atual.meta) * 100))
 
   function salvar(proximo, mensagem) {
+    // Mantém o consumo na sessão mesmo se o navegador impedir a gravação.
     setRegistro(proximo)
     setHoje(proximo.dia)
     try {
@@ -39,7 +52,9 @@ export function useWaterTracker() {
       setErro("")
       if (mensagem) notify(mensagem)
     } catch {
-      setErro("Não foi possível salvar o consumo. As alterações podem ser perdidas ao sair da página.")
+      setErro(
+        "Não foi possível salvar o consumo. As alterações podem ser perdidas ao sair da página."
+      )
     }
   }
 
@@ -61,5 +76,14 @@ export function useWaterTracker() {
     return true
   }
 
-  return { total, meta: atual.meta, porcentagem, erro, adicionar, desfazer, alterarMeta, temRegistros: atual.quantidades.length > 0 }
+  return {
+    total,
+    meta: atual.meta,
+    porcentagem,
+    erro,
+    adicionar,
+    desfazer,
+    alterarMeta,
+    temRegistros: atual.quantidades.length > 0,
+  }
 }

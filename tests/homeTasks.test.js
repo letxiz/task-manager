@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import { resumirTarefas, paginarTarefas } from "../src/utils/homeTasks.js"
+import { resumirTarefas, paginarTarefas, paginarResumoTarefas } from "../src/utils/homeTasks.js"
 
 test("lista vazia produz contadores e progresso zerados", () => {
   assert.deepEqual(resumirTarefas([]), { total: 0, concluidas: 0, porcentagem: 0, visiveis: [] })
@@ -56,4 +56,16 @@ test("página é ajustada após remoções e lista vazia não gera página invá
   assert.equal(vazia.primeiro, 0)
   assert.equal(vazia.ultimo, 0)
   assert.deepEqual(vazia.visiveis, [])
+})
+
+test("paginação de resumo reutiliza a ordenação e mantém os resultados existentes", () => {
+  const tarefas = Array.from({ length: 25 }, (_, index) => ({ id: String(index), concluida: index % 3 === 0, data: index % 2 ? "" : `2026-11-${String(index + 1).padStart(2, "0")}` }))
+  const antes = structuredClone(tarefas)
+  const resumo = resumirTarefas(tarefas, tarefas.length)
+  const ordenadas = [...resumo.visiveis]
+  for (const pagina of [0, 1, 2, 3, 10]) {
+    assert.deepEqual(paginarResumoTarefas(resumo, pagina), paginarTarefas(tarefas, pagina))
+  }
+  assert.deepEqual(resumo.visiveis, ordenadas)
+  assert.deepEqual(tarefas, antes)
 })

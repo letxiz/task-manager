@@ -1,3 +1,5 @@
+import { useMemo } from "react"
+import { agruparTarefasVisiveis } from "../../../utils/taskGroups.js"
 import PropTypes from "prop-types"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
@@ -24,9 +26,13 @@ function TaskList({
   onEditUnassigned,
 }) {
   // Mantém a lista completa como base para o arraste.
-  const { tarefasSemTopico, previaArraste, dragProps } = useTaskDrag({
+  const { indiceTarefas, previaArraste, dragProps } = useTaskDrag({
     tarefas, topicos, onMoveTask, onReorderTasks, onReorderTopicos,
   })
+
+  const { porTopico, tarefasSemTopico } = useMemo(() =>
+    tarefasVisiveis === tarefas ? indiceTarefas : agruparTarefasVisiveis(indiceTarefas, tarefasVisiveis),
+  [indiceTarefas, tarefas, tarefasVisiveis])
 
   if (tarefas.length === 0 && topicos.length === 0) {
     return (
@@ -47,10 +53,10 @@ function TaskList({
           >
             <div className="space-y-6">
               {/* Mostra os tópicos que contêm resultados do filtro. */}
-              {topicos.filter((topico) => !filtrando || tarefasVisiveis.some((tarefa) => tarefa.topicoId === topico.id)).map((topico) => (
+              {topicos.filter((topico) => !filtrando || porTopico.has(topico.id) && porTopico.get(topico.id).length > 0).map((topico) => (
                 <SortableTopic key={topico.id} topic={topico} onDeleteTopic={onDeleteTopic} onEditTopic={onEditTopic}>
                   <TaskGroup
-                    tarefas={tarefasVisiveis.filter((tarefa) => tarefa.topicoId === topico.id)}
+                    tarefas={porTopico.get(topico.id) ?? []}
                     topicId={topico.id}
                     onToggle={onToggle}
                     onDelete={onDelete}
@@ -61,9 +67,9 @@ function TaskList({
             </div>
           </SortableContext>
 
-          {tarefasSemTopico.some((tarefa) => tarefasVisiveis.includes(tarefa)) && (
+          {tarefasSemTopico.length > 0 && (
             <UnassignedDropZone onEdit={onEditUnassigned}>
-              <TaskGroup tarefas={tarefasSemTopico.filter((tarefa) => tarefasVisiveis.includes(tarefa))} topicId="" onToggle={onToggle} onDelete={onDelete} onEdit={onEditTask} />
+              <TaskGroup tarefas={tarefasSemTopico} topicId="" onToggle={onToggle} onDelete={onDelete} onEdit={onEditTask} />
             </UnassignedDropZone>
           )}
         </div>

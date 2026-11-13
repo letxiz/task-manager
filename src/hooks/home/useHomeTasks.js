@@ -1,20 +1,29 @@
-import { useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { useTaskData } from "../tasks/useTaskData"
-import { useTaskForm } from "../tasks/useTaskForm"
+import { useFormControls } from "../tasks/useFormControls"
 
 export function useHomeTasks() {
   const dados = useTaskData()
-  const formulario = useTaskForm(dados)
+  const formularioRef = useRef(null)
+  const formulario = useFormControls(formularioRef)
   const [detalhesId, setDetalhesId] = useState(null)
   // Busca os detalhes na lista atual.
-  const selecionada = dados.tarefas.find((tarefa) => tarefa.id === detalhesId) ?? null
+  const selecionada =
+    dados.tarefas.find((tarefa) => tarefa.id === detalhesId) ?? null
+
+  const verDetalhes = useCallback((tarefa) => setDetalhesId(tarefa.id), [])
 
   return {
-    dados, formulario,
-    verDetalhes: (tarefa) => setDetalhesId(tarefa.id),
+    dados,
+    formulario,
+    formularioRef,
+    verDetalhes,
     detalhes: {
-      item: selecionada, kind: "task",
-      topicName: dados.topicos.find((topico) => topico.id === selecionada?.topicoId)?.nome,
+      item: selecionada,
+      kind: "task",
+      topicName: dados.topicos.find(
+        (topico) => topico.id === selecionada?.topicoId
+      )?.nome,
       onClose: () => {
         setDetalhesId(null)
       },

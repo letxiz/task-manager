@@ -1,7 +1,6 @@
 import { useState } from "react"
-import { gerarIdSeguro } from "../../utils/generateId"
 
-export function useTaskForm({ topicos, setTarefas }) {
+export function useTaskForm({ topicos, criarTarefa: cadastrarTarefa, editarTarefa: atualizarTarefa }) {
   const [tarefaEditando, setTarefaEditando] = useState(null)
   const [modalAberto, setModalAberto] = useState(false)
   const [janelaExpandida, setJanelaExpandida] = useState(false)
@@ -41,43 +40,18 @@ export function useTaskForm({ topicos, setTarefas }) {
   function criarTarefa(event) {
     event.preventDefault()
 
-    const tituloValido = titulo.trim()
-
-    if (!tituloValido) {
-      setErroTitulo("O título da tarefa é obrigatório.")
+    const campos = { titulo, descricao, data, topicoId, cor }
+    const resultado = tarefaEditando ? atualizarTarefa(tarefaEditando, campos) : cadastrarTarefa(campos)
+    if (resultado.erro) {
+      if (resultado.campo === "titulo") setErroTitulo(resultado.erro)
+      else setErroCriacaoTarefa(resultado.erro)
       return
     }
-
-    // Preserva ID, status e ordem.
     if (tarefaEditando) {
-      setTarefas((atuais) => atuais.map((tarefa) => tarefa.id === tarefaEditando
-        ? { ...tarefa, titulo: tituloValido, descricao: descricao.trim(), data, topicoId }
-        : tarefa), "Tarefa atualizada com sucesso.")
       fecharModal()
       return
     }
 
-    let id
-    try {
-      id = gerarIdSeguro()
-    } catch {
-      setErroCriacaoTarefa(
-        "Este navegador não conseguiu gerar um identificador seguro. Tente novamente em um navegador atualizado."
-      )
-      return
-    }
-
-    const novaTarefa = {
-      id,
-      titulo: tituloValido,
-      descricao: descricao.trim(),
-      data,
-      topicoId,
-      cor,
-      concluida: false,
-    }
-
-    setTarefas((atuais) => [...atuais, novaTarefa], "Tarefa cadastrada com sucesso.")
     setTitulo("")
     setDescricao("")
     setData("")
