@@ -1,12 +1,10 @@
 import { useState } from "react"
-import { useNotification } from "../../contexts/NotificationContext"
 
 export function useTaskDialogs(dados, formularioTarefa, formularioTopico) {
-  const notify = useNotification()
   const [detalhes, setDetalhes] = useState(null)
   const [topicoParaExcluir, setTopicoParaExcluir] = useState(null)
   const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
-  const { tarefas, topicos, setTarefas, setTopicos, excluirTopico } = dados
+  const { tarefas, topicos, limparDados, excluirTopico } = dados
 
   function limpar() {
     if (tarefas.length || topicos.length) setConfirmacaoAberta(true)
@@ -42,10 +40,9 @@ export function useTaskDialogs(dados, formularioTarefa, formularioTopico) {
       },
       onConfirm: () => {
         if (!topicoParaExcluir) return
-        const salvo = excluirTopico(topicoParaExcluir.id)
+        excluirTopico(topicoParaExcluir.id)
         formularioTarefa.removerTopico(topicoParaExcluir.id)
         setTopicoParaExcluir(null)
-        if (salvo) notify("Tópico excluído. As tarefas foram mantidas em Sem tópico.")
       },
     },
     limpeza: {
@@ -56,10 +53,8 @@ export function useTaskDialogs(dados, formularioTarefa, formularioTopico) {
         setConfirmacaoAberta(false)
       },
       onConfirm: () => {
-        const tarefasSalvas = setTarefas([])
-        const topicosSalvos = setTopicos([])
+        limparDados()
         setConfirmacaoAberta(false)
-        if (tarefasSalvas && topicosSalvos) notify("Todas as tarefas e tópicos foram excluídos.")
       },
     },
   }

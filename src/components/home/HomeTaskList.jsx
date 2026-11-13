@@ -1,5 +1,5 @@
 import TaskStatusBadge from "../tasks/TaskStatusBadge"
-import { useState } from "react"
+import { memo, useMemo, useState } from "react"
 import PropTypes from "prop-types"
 import { Link } from "react-router-dom"
 import {
@@ -12,23 +12,21 @@ import {
 } from "lucide-react"
 import { formatarDataExibicao } from "../../utils/dateUtils"
 import { diaLocal } from "../../utils/waterStorage"
-import { paginarTarefas } from "../../utils/homeTasks"
+import { resumirTarefas, paginarResumoTarefas } from "../../utils/homeTasks"
 
-export default function HomeTaskList({
+function HomeTaskList({
   tarefas,
   topicos,
   onToggle,
   onDetails,
   onCreate,
+  hoje = diaLocal(),
 }) {
   const [pagina, setPagina] = useState(1)
-  const { total, visiveis, paginaAtual, totalPaginas } = paginarTarefas(
-    tarefas,
-    pagina
-  )
+  const resumo = useMemo(() => resumirTarefas(tarefas, tarefas.length), [tarefas])
+  const { total, visiveis, paginaAtual, totalPaginas } = paginarResumoTarefas(resumo, pagina)
   // Ajusta a página quando a lista encolhe.
   if (pagina !== paginaAtual) setPagina(paginaAtual)
-  const hoje = diaLocal()
 
   return (
     <section
@@ -156,6 +154,7 @@ export default function HomeTaskList({
 }
 
 HomeTaskList.propTypes = {
+  hoje: PropTypes.string,
   tarefas: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -175,3 +174,5 @@ HomeTaskList.propTypes = {
   onDetails: PropTypes.func.isRequired,
   onCreate: PropTypes.func.isRequired,
 }
+
+export default memo(HomeTaskList)

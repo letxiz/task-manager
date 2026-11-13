@@ -1,0 +1,72 @@
+{
+  "referencia_anterior": "e850d35",
+  "viewport": {
+    "width": 1440,
+    "height": 1800
+  },
+  "condicoes": "mesma fixture e navegador; auditoria após carregar a rota e as fontes",
+  "resultados": [
+    {
+      "versao": "refatorada",
+      "tarefas": [
+        {
+          "id": "aria-allowed-role",
+          "count": 3
+        },
+        {
+          "id": "color-contrast",
+          "count": 4
+        },
+        {
+          "id": "list",
+          "count": 2
+        },
+        {
+          "id": "nested-interactive",
+          "count": 3
+        }
+      ],
+      "inicio": [
+        {
+          "id": "color-contrast",
+          "count": 4
+        },
+        {
+          "id": "label-content-name-mismatch",
+          "count": 4
+        }
+      ]
+    },
+    {
+      "versao": "anterior",
+      "tarefas": [
+        {
+          "id": "aria-allowed-role",
+          "count": 3
+        },
+        {
+          "id": "color-contrast",
+          "count": 4
+        },
+        {
+          "id": "list",
+          "count": 2
+        },
+        {
+          "id": "nested-interactive",
+          "count": 3
+        }
+      ],
+      "inicio": [
+        {
+          "id": "color-contrast",
+          "count": 4
+        },
+        {
+          "id": "label-content-name-mismatch",
+          "count": 4
+        }
+      ]
+    }
+  ]
+}
