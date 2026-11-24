@@ -3,6 +3,9 @@ import { Menu } from "lucide-react"
 import { Outlet } from "react-router-dom"
 import Sidebar from "../../components/layout/Sidebar"
 import WorkspaceHeader from "../../components/layout/WorkspaceHeader"
+import ApiPreview from "../../components/tasks/ApiPreview"
+
+const modoApi = import.meta.env.DEV ? import.meta.env.VITE_API_PREVIEW : undefined
 
 function AppLayout() {
   const menuRef = useRef(null)
@@ -45,9 +48,9 @@ function AppLayout() {
           <span className="font-semibold">Task Manager</span>
         </header>
 
-        {/* Centraliza o conteúdo e ajusta o espaçamento para cada tela. */}
         <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-7xl flex-1 p-5 sm:px-10 sm:py-4 lg:px-12">
           <WorkspaceHeader />
+          {(modoApi === "true" || modoApi === "write") && <ApiPreview permiteGravar={modoApi === "write"} />}
           <Outlet />
         </main>
       </div>
