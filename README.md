@@ -98,6 +98,10 @@ npm run dev
 
 Abra o endereço exibido pelo Vite no terminal. Para testar em outro dispositivo na mesma rede, use o endereço de rede informado pelo servidor.
 
+### GitHub Pages
+
+O GitHub Actions publica o frontend da branch `main` depois de rodar o lint e os testes. Em [Minhas Tarefas no GitHub Pages](https://letxiz.github.io/task-manager/#/tasks), a rota usa `#/tasks` para funcionar ao abrir ou recarregar o endereço. As tarefas e o consumo de água ficam no navegador.
+
 ### API local opcional
 
 Para iniciar o Express em outro terminal:
