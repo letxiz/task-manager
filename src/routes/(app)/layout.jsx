@@ -24,6 +24,10 @@ function AppLayout() {
     <div className="min-h-dvh bg-[#f2ece4] text-stone-800 md:flex">
       <a
         href="#main-content"
+        onClick={import.meta.env.MODE === "github-pages" ? (evento) => {
+          evento.preventDefault()
+          document.getElementById("main-content")?.focus()
+        } : undefined}
         className="sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:not-sr-only focus:rounded-lg focus:bg-white focus:p-3"
       >
         Ir para o conteúdo
