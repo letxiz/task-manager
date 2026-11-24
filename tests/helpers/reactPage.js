@@ -10,7 +10,7 @@ export async function criarAmbientePaginas({ antesDeCarregarTarefas } = {}) {
     originais.set(chave, Object.getOwnPropertyDescriptor(globalThis, chave))
     Object.defineProperty(globalThis, chave, { configurable: true, writable: true, value: valor })
   }
-  // jsdom não implementa a abertura de dialog nativo nem seu foco automático.
+  // Simula a abertura e o fechamento do diálogo no jsdom.
   dom.window.HTMLDialogElement.prototype.showModal = function () { this.open = true }
   dom.window.HTMLDialogElement.prototype.close = function () { this.open = false }
   dom.window.HTMLElement.prototype.showPopover = function () { this.setAttribute("data-popover-open", "") }
@@ -43,7 +43,7 @@ export async function criarAmbientePaginas({ antesDeCarregarTarefas } = {}) {
         desmontar: async () => { await act(async () => root.unmount()) },
       }
     },
-    async montar(caminho, dados) {
+    async montar(caminho, dados, props) {
       localStorage.clear()
       const { default: Pagina } = await server.ssrLoadModule(caminho)
       const root = createRoot(document.getElementById("root"))
@@ -52,7 +52,7 @@ export async function criarAmbientePaginas({ antesDeCarregarTarefas } = {}) {
         await act(async () => root.render(createElement(MemoryRouter, null,
           createElement(NotificationContext.Provider, { value: notificar },
             createElement(TaskActionsContext.Provider, { value: atuais },
-              createElement(TaskContext.Provider, { value: atuais }, createElement(Pagina)))))))
+              createElement(TaskContext.Provider, { value: atuais }, createElement(Pagina, props)))))))
       }
       const notificar = (mensagem) => mensagens.push(mensagem)
       await renderizar(dados)

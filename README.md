@@ -48,8 +48,9 @@ O projeto exercita gerenciamento de estado compartilhado, composição de compon
 | Tailwind CSS 4 | Estilos responsivos, tema e estados visuais. |
 | dnd-kit | Ordenação e movimentação de tarefas e tópicos. |
 | Vite 8 | Servidor de desenvolvimento e build de produção. |
+| Express 5 e PostgreSQL 17 | API local e persistência dos dados do piloto. |
 | Lucide React | Ícones da interface. |
-| Node.js Test Runner | Testes de funções de resumo, paginação e armazenamento de água. |
+| Node.js Test Runner e jsdom | Testes de lógica, interface e integração HTTP da API. |
 | ESLint | Verificação estática do código. |
 
 ## Decisões técnicas
@@ -80,11 +81,13 @@ src/
 ├── constants/            # Cores e estilos compartilhados
 └── utils/                # Datas, persistência, resumo e paginação
 tests/                    # Testes automatizados
+server/                   # API, migração PostgreSQL e testes HTTP
+docs/                     # Guias de uso e desenvolvimento
 ```
 
 ## Execução local
 
-Use **Node.js 24** e npm, ambiente utilizado nas verificações do projeto. Não é necessário configurar credenciais ou variáveis de ambiente.
+Use **Node.js 24** e npm. O frontend em modo local roda com as configurações padrão.
 
 ```bash
 git clone https://github.com/letxiz/task-manager.git
@@ -95,6 +98,17 @@ npm run dev
 
 Abra o endereço exibido pelo Vite no terminal. Para testar em outro dispositivo na mesma rede, use o endereço de rede informado pelo servidor.
 
+### API local opcional
+
+Para iniciar o Express em outro terminal:
+
+```bash
+npm --prefix server ci
+npm --prefix server start
+```
+
+Em outro terminal, `curl -fsS http://127.0.0.1:3000/api/health` deve retornar `{"status":"ok"}`. Para configurar o PostgreSQL, usar as rotas de tarefas e tópicos ou ativar a prévia, siga o [guia da API local](docs/api-local.md).
+
 ## Validação
 
 ```bash
@@ -103,7 +117,7 @@ npm test
 npm run build
 ```
 
-Os testes automatizados cobrem resumo e ordenação das tarefas, paginação em grupos de seis, ajuste da página após remoções e armazenamento diário de água. A cobertura atual é de lógica; não há testes automatizados de interface ou de ponta a ponta.
+O comando da raiz inclui testes de lógica, persistência e interface em jsdom. Para executar a suíte HTTP da API com PostgreSQL, use `npm --prefix server test` após configurar o banco. Consulte os pré-requisitos e a cobertura no [guia da API local](docs/api-local.md).
 
 Para visualizar o build de produção localmente:
 
@@ -113,12 +127,14 @@ npm run preview
 
 ## Escopo atual
 
-A aplicação funciona no navegador, sem backend, autenticação ou sincronização entre dispositivos. Os dados pertencem à origem e ao perfil de navegador utilizados; limpar o armazenamento do site remove os registros. A paginação está disponível na lista do início.
+As telas principais usam `localStorage`. Os dados pertencem à origem e ao perfil do navegador. A prévia optativa lê e grava tarefas e tópicos no PostgreSQL. Importação de dados locais, contas e sincronização entre dispositivos ainda estão pendentes.
 
 ## Documentação e créditos
 
 - [Guia de uso](docs/uso.md)
+- [API local, PostgreSQL e testes](docs/api-local.md)
 - [Guia de desenvolvimento e fluxo de branches](docs/desenvolvimento.md)
+- [Persistência de tarefas e tópicos no navegador](docs/persistencia.md)
 - [Referência de design no Figma](https://www.figma.com/design/A5w7qejEx7p0jDkMsNIEg3/Task-Manager?node-id=0-1), adaptada durante o desenvolvimento.
 
 Desenvolvido por [letxiz](https://github.com/letxiz) e [zeni-node](https://github.com/zeni-node).
